@@ -6,9 +6,25 @@
 
 This repository is a set of case studies on various uses of AI in research. 
 
-It came out of a workshop breakout group (Neil, Brandeis, Malvika and John) that set out to answer the question above.
+It came out of a workshop group with following members that set out to explore responses to the question above:
+- John Basl
+- Brandeis Marshall
+- Malvika Sharan
+- Neil Chue Hong
 
-Each case applies a shared [appraisal checklist](appraisal-checklist.md), and the [cross-case synthesis](cross-case-synthesis.md) reads them together.
+Through team discussions, we agreed to build a library of case studies demonstrating the various ways AI has been used in research and research context.
+- A set of case studies were curated from publications, preprints and press articles.
+- A few case studies were selected and expanded into an initial draft.
+- A shared [appraisal checklist](appraisal-checklist.md) was developed and used for formatting each draft into standard documentation.
+- And the [cross-case synthesis](cross-case-synthesis.md) was created to read them side-by-side.
+
+
+## Status and caveats
+
+- **Draft, November 2026.** Several cases are living cases. Re-check facts before each use.
+- **Verify before using.** Each case ends with a verification note, and requires additional reviews and verification.
+- **Illustrative vignettes are labelled.** Undue Influence and Morally Inadmissible Evidence use invented composite scenarios, each followed by documented cases.
+- **AI assistance and conflicts of interest.** Initial cases were drafted by the group members and then expanded and formatted with Claude (Anthropic models Opus and Sonnet have been used).
 
 ---
 
@@ -119,15 +135,6 @@ The workshop proposed these cases, which are not yet written up. The one-line su
 | Negative, excludes | **METR rogue-agent investigation** (Aug 2026) | An independent audit of agents acting beyond their authorised scope |
 
 The notes list one arXiv ID (2605.08956) for both the agentic-scientists paper and Si et al. Si et al. is arXiv:2409.04109.
-
----
-
-## Status and caveats
-
-- **Draft, November 2026.** Several cases are living cases. Re-check facts before each use.
-- **Verify before using.** Each case ends with a verification note, and the synthesis has a merged list.
-- **Illustrative vignettes are labelled.** Undue Influence and Morally Inadmissible Evidence use invented composite scenarios, each followed by documented cases.
-- **AI assistance and conflicts of interest.** Several cases were drafted or rewritten with Claude (Anthropic).
 
 ---
 
