@@ -51,10 +51,10 @@ The discussion kept coming back to a few risks:
 
 ### Why case studies
 
-We agreed that the most useful first output was a **set of cases, from theoretical to actual**. They capture good practice we want to encourage, and bad practice: undue influence, exclusion, or failure to respect ethical constraints. The cases have two purposes:
+We agreed that the most useful first output was a **set of cases, from theoretical to actual**. They capture good practice we want to encourage, and bad practice: undue influence, exclusion, or failure to respect ethical constraints. These cases are intended to help build ethical capacity in two ways:
 
-1. **To build evaluations and measures for AI-based research tools.** Each case points to something a tool should detect, mark, refuse or surface.
-2. **To build sensitivity in practitioners.** Researchers using AI tools need to see both the pitfalls and the promise in concrete situations.
+1. **Setting Targets:** Each case points to something want to design socio-technical systems to detect, mark, refuse or surface.
+2. **Increasing Ethical Sensitivity:** Researchers using AI tools need to see both the pitfalls and the promise as they augment their research with AI tools.
 
 The longer-term aims are a **research agenda** for realising the promising cases and avoiding the bad ones, and a commissioned study on what the signal looks like when a knowledge graph such as OpenAlex draws on commercial sources versus underrepresented groups.
 
