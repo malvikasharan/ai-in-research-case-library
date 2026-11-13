@@ -91,13 +91,13 @@ Each written case also carries a label from the appraisal checklist: Positive, A
 
 | Case | Appraisal label | What it asks | Lesson |
 |---|---|---|---|
-| [AlphaFold](alphafold.md) | Ambiguous | Does an open, transformative tool still carry costs in credit, trust and access? | Open is not the same as unproblematic |
-| [Navier–Stokes](navier–stokes.md) | Contested | What happens when an AI result is announced before the community can check it? | Announcement is not acceptance |
-| [Virtual Lab](virtual-lab.md) | Positive | When do AI agents do good science? | Narrow task, human owner, experiment first |
-| [Long-Tail Research](long-tail-research.md) | Ambiguous | Can AI curation and discovery give overlooked datasets the reuse they deserve? | Findable is not credited |
-| [Undue Influence](undue-influence.md) | Negative (partly illustrative) | How do AI tools give unvetted or discredited work outsized weight? | Reach is not vetting |
-| [Morally Inadmissible Evidence](morally-inadmissible.md) | Negative (illustrative) | How do agents bring in evidence obtained in ways that wrong its sources? | Accurate is not admissible |
-| [Word Weaponization](word-weaponization.md) | Negative | What happens when AI is used to find and defund research by its vocabulary? | The tool is the deployer's instrument |
+| [AlphaFold](case-studies/alphafold.md) | Ambiguous | Does an open, transformative tool still carry costs in credit, trust and access? | Open is not the same as unproblematic |
+| [Navier–Stokes](case-studies/navier–stokes.md) | Contested | What happens when an AI result is announced before the community can check it? | Announcement is not acceptance |
+| [Virtual Lab](case-studies/virtual-lab.md) | Positive | When do AI agents do good science? | Narrow task, human owner, experiment first |
+| [Long-Tail Research](case-studies/long-tail-research.md) | Ambiguous | Can AI curation and discovery give overlooked datasets the reuse they deserve? | Findable is not credited |
+| [Undue Influence](case-studies/undue-influence.md) | Negative (partly illustrative) | How do AI tools give unvetted or discredited work outsized weight? | Reach is not vetting |
+| [Morally Inadmissible Evidence](case-studies/morally-inadmissible.md) | Negative (illustrative) | How do agents bring in evidence obtained in ways that wrong its sources? | Accurate is not admissible |
+| [Word Weaponization](case-studies/word-weaponization.md) | Negative | What happens when AI is used to find and defund research by its vocabulary? | The tool is the deployer's instrument |
 
 Every case follows the same structure:
 - Sources, background, and who did what
