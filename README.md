@@ -128,3 +128,9 @@ The notes list one arXiv ID (2605.08956) for both the agentic-scientists paper a
 - **Verify before using.** Each case ends with a verification note, and the synthesis has a merged list.
 - **Illustrative vignettes are labelled.** Undue Influence and Morally Inadmissible Evidence use invented composite scenarios, each followed by documented cases.
 - **AI assistance and conflicts of interest.** Several cases were drafted or rewritten with Claude (Anthropic).
+
+---
+
+## License
+
+The software code in this repository is licensed under the MIT license. The data and content in this repository if licensed under the CC-BY license.
