@@ -1,6 +1,6 @@
 # Cross-case synthesis
 
-Seven cases, read together. Four are AI claims or tools in science: [AlphaFold](alphafold.md), [Navier–Stokes](navier–stokes.md), the [Virtual Lab](virtual-lab.md) and [Long-Tail Research](long-tail-research.md) (FAIRdata.ai and AutoDiscovery). Two are problem classes built from invented vignettes and documented cases: [Undue Influence](undue-influence.md) and [Morally Inadmissible Evidence](morally-inadmissible.md). One is a documented misuse of AI against research: [Word Weaponization](word-weaponization.md).
+Seven cases, read together. Four are AI claims or tools in science: [AlphaFold](case-studies/alphafold.md), [Navier–Stokes](case-studies/navier–stokes.md), the [Virtual Lab](case-studies/virtual-lab.md) and [Long-Tail Research](case-studies/long-tail-research.md) (FAIRdata.ai and AutoDiscovery). Two are problem classes built from invented vignettes and documented cases: [Undue Influence](case-studies/undue-influence.md) and [Morally Inadmissible Evidence](case-studies/morally-inadmissible.md). One is a documented misuse of AI against research: [Word Weaponization](case-studies/word-weaponization.md).
 
 ## Order of claim and check
 

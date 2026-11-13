@@ -15,14 +15,15 @@ Everything is built from **plain Markdown files**, parsed by a Python script int
 ├── appraisal-checklist.md             # 16-question checklist + template (used every case)
 ├── case-study-guide.md                # Template for writing new cases
 ├── cross-case-synthesis.md            # Synthesis: side-by-side, patterns, pairings
-├── alphafold.md                       # Case 1 — Ambiguous
-├── navier–stokes.md                   # Case 2 — Contested
-├── virtual-lab.md                     # Case 3 — Positive
-├── long-tail-research.md              # Case 4 — Ambiguous
-├── undue-influence.md                 # Case 5 — Negative (illustrative)
-├── morally-inadmissible.md            # Case 6 — Negative (illustrative)
-├── word-weaponization.md              # Case 7 — Negative
-└── designs/
+├── case-studies/
+│   ├── alphafold.md                   # Case 1 — Ambiguous
+│   ├── navier–stokes.md               # Case 2 — Contested
+│   ├── virtual-lab.md                 # Case 3 — Positive
+│   ├── long-tail-research.md          # Case 4 — Ambiguous
+│   ├── undue-influence.md             # Case 5 — Negative (illustrative)
+│   ├── morally-inadmissible.md        # Case 6 — Negative (illustrative)
+│   └── word-weaponization.md          # Case 7 — Negative
+└── docs/
     ├── index.html                     # Landing page: hero, case cards, cross-case overview
     ├── story.html                     # Scroll-driven narrative with charts and interaction
     ├── dossier.html                   # Layered dossier with Skim / Read / Deep toggle
@@ -156,12 +157,12 @@ Must include these sections (use exact heading text):
 ## Step 3 — Run build.py to Generate Data
 
 ```bash
-cd designs/
+cd docs/
 python3 build.py
 ```
 
 `build.py`:
-- Reads all case `.md` files from the repo root
+- Reads all case `.md` files from `case-studies/`
 - Parses headings (## Section → h3), pipe tables, bullet/numbered lists, blockquotes, paragraphs, inline bold/italic/code/links
 - Outputs `data/cases.js` with `window.CASES = { slug: parsedCase, ... }` and `window.SYNTHESIS = parsedSynthesis`
 - Also reads `cross-case-synthesis.md` for the cross-case overview
@@ -170,7 +171,7 @@ The generated JSON structure per case:
 ```javascript
 {
   slug: "alphafold",
-  file: "alphafold.md",
+  file: "case-studies/alphafold.md",
   title: "AlphaFold",
   label: { tag: "Ambiguous", html: "Open release is a genuine and uncommon good..." },
   callouts: [{ paras: ["...", "..."] }],  // from > blockquotes before first heading
@@ -190,7 +191,7 @@ The generated JSON structure per case:
 
 ## Step 4 — Add Per-Case Visual Extras (optional but recommended)
 
-File: `designs/data/extras.js`
+File: `docs/data/extras.js`
 
 For each case slug, add a visual customization object:
 
@@ -380,8 +381,8 @@ SVG visualization functions (all accept `(el, data, activeIndex, options)`:
 1. [ ] Write each case `.md` file following the exact heading structure in Step 1
 2. [ ] Ensure all four deep dives are present per case with Debate A/B sections
 3. [ ] Write `cross-case-synthesis.md` with all six required sections (exact heading text)
-4. [ ] Run `python3 designs/build.py` to generate `data/cases.js`
-5. [ ] Add per-case visual extras in `designs/data/extras.js` (optional but recommended)
+4. [ ] Run `python3 docs/build.py` to generate `data/cases.js`
+5. [ ] Add per-case visual extras in `docs/data/extras.js` (optional but recommended)
 6. [ ] Implement or serve the three HTML files from the same directory (local server required for CORS)
 7. [ ] Verify responsive layout on mobile (820px breakpoint)
 8. [ ] Cross-check all facts marked **[VERIFY]** against primary sources before teaching
