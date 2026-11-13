@@ -1,0 +1,9 @@
+# macOS Finder metadata
+.DS_Store
+
+# Hidden files and directories
+.[!.]*
+..?*
+
+# Keep this configuration versioned
+!.gitignore
