@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study · Design C: Layered dossier</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+:root {
+  --paper: #ffffff; --ink: #111111; --muted: #cfcfcf; --muted-ink: #666; --line: #e4e4e4;
+  --accent: #2f54eb; --accent2: #111; --ok: #1f9d55; --bad: #d1342f; --warn: #e0a100; --tint: #f3f5ff;
+  --serif: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, serif;
+  --sans: "Inter", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+  --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+body { background: var(--paper); color: var(--ink); font-family: var(--serif); font-size: 18px; line-height: 1.62; }
+.topbar { position: sticky; top: 0; z-index: 30; background: rgba(255, 255, 255, .95); backdrop-filter: blur(6px); border-bottom: 1px solid var(--ink); display: flex; align-items: center; gap: 1rem; padding: .55rem 1.2rem; font-family: var(--sans); font-size: .8rem; flex-wrap: wrap; }
+.topbar a { text-decoration: none; font-weight: 700; }
+.topbar .sp { flex: 1; }
+.depth { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.depth button { border: 0; background: none; padding: .35rem .9rem; font-weight: 700; font-size: .8rem; color: var(--ink); }
+.depth button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.depth-hint { color: var(--muted-ink); font-size: .75rem; }
+.switch a { margin-left: .5rem; padding: .2rem .55rem; border: 1.5px solid var(--ink); border-radius: 4px; }
+.switch a[aria-current] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.readbar { height: 3px; background: var(--accent); width: 0; position: fixed; top: 0; left: 0; z-index: 40; }
+
+.layout { display: grid; grid-template-columns: 190px minmax(0, 700px) 320px; gap: 2.5rem; justify-content: center; padding: 0 1.2rem; }
+.toc { position: sticky; top: 64px; align-self: start; font-family: var(--sans); font-size: .8rem; padding-top: 2rem; }
+.toc a { display: block; text-decoration: none; padding: .3rem 0 .3rem .7rem; border-left: 2px solid var(--line); color: var(--muted-ink); }
+.toc a.on { border-color: var(--accent); color: var(--ink); font-weight: 700; }
+.toc .rt { margin-top: 1rem; font-family: var(--mono); font-size: .72rem; color: var(--muted-ink); }
+
+/* Masthead */
+.mast { padding: 2.4rem 0 1rem; border-bottom: 3px double var(--ink); }
+.kicker { font: 700 .75rem var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.mast h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); line-height: 1.02; margin: .25em 0 .35em; letter-spacing: -.015em; }
+.dek { font-size: 1.22rem; line-height: 1.45; color: #333; margin: 0 0 1rem; }
+.verdict { display: flex; gap: .8rem; align-items: flex-start; font: .9rem var(--sans); background: var(--tint); padding: .8rem 1rem; border-left: 4px solid var(--accent); }
+.verdict b { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; background: var(--accent); color: #fff; padding: .15rem .5rem; white-space: nowrap; }
+.callout { font: .85rem var(--sans); color: var(--muted-ink); margin-top: .8rem; }
+
+/* Glance */
+.glance { padding: 1.6rem 0; border-bottom: 1px solid var(--ink); }
+.glance h2, .sec h2 { font: 800 .8rem var(--sans); letter-spacing: .14em; text-transform: uppercase; margin: 0 0 1rem; display: flex; align-items: center; gap: .6rem; }
+.sec h2 .n { font-family: var(--mono); color: var(--accent); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); margin-bottom: 1.4rem; }
+.stats div { border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: .7rem; font: .78rem var(--sans); color: var(--muted-ink); }
+.stats b { display: block; font: 800 1.7rem var(--sans); color: var(--ink); letter-spacing: -.02em; }
+.glance-grid { display: grid; grid-template-columns: 170px 1fr; gap: 1.4rem; align-items: center; }
+.legend { font: .8rem var(--sans); list-style: none; padding: 0; margin: .6rem 0 0; }
+.legend li { display: flex; align-items: center; gap: .4rem; margin-bottom: .2rem; }
+.legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.glance .viz { width: 100%; }
+#dumb .viz { max-width: 540px; }
+
+/* Sections */
+.sec { padding: 2rem 0 1.4rem; border-bottom: 1px solid var(--line); scroll-margin-top: 60px; }
+.sec > .lead { font-size: 1.2rem; line-height: 1.45; font-style: italic; margin: 0 0 1rem; }
+.sec h3 { font: 700 1.25rem var(--serif); margin: 1.4rem 0 .5rem; }
+.sec h4 { font: 700 .95rem var(--sans); margin: 1rem 0 .3rem; }
+.margin-tag { font: 600 .68rem var(--mono); color: var(--accent); background: var(--tint); padding: .1rem .4rem; border-radius: 3px; margin-left: .4rem; vertical-align: middle; }
+.storylist { counter-reset: s; list-style: none; padding: 0; }
+.storylist li { counter-increment: s; position: relative; padding-left: 2.4rem; margin-bottom: .8rem; }
+.storylist li::before { content: counter(s, decimal-leading-zero); position: absolute; left: 0; top: .15rem; font: 700 .8rem var(--mono); color: var(--accent); }
+.who { display: grid; gap: 0; border-top: 1px solid var(--ink); }
+.who div { display: grid; grid-template-columns: 120px 1fr; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--line); font-size: .98rem; }
+.who b { font: 800 .8rem var(--sans); text-transform: uppercase; letter-spacing: .08em; padding-top: .2rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .8rem; font-family: var(--sans); }
+.chips button { border: 1.5px solid var(--ink); background: #fff; border-radius: 999px; padding: .2rem .7rem; font-size: .75rem; font-weight: 700; color: var(--ink); }
+.chips button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.claim { padding: .7rem 0; border-bottom: 1px solid var(--line); }
+.claim .top { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; font-weight: 700; }
+.claim .ev { font: .88rem var(--sans); color: var(--muted-ink); margin-top: .2rem; }
+.risktable { width: 100%; border-collapse: collapse; font: .88rem var(--sans); }
+.risktable td, .risktable th { text-align: left; padding: .45rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.risktable th { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; border-bottom: 1px solid var(--ink); }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: .35rem; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+.pair > div { padding: .9rem 1rem; font-size: .96rem; border-top: 3px solid var(--ink); background: #fafafa; }
+.pair > div.reading { border-color: var(--accent); background: var(--tint); }
+.pair h4 { margin: 0 0 .3rem; font: 800 .72rem var(--sans); letter-spacing: .12em; text-transform: uppercase; }
+.discuss { font: .9rem var(--sans); border-left: 3px solid var(--warn); padding: .5rem .9rem; background: #fffaf0; }
+.issue { padding: .6rem 0; border-bottom: 1px solid var(--line); }
+.issue .who-c { font: .78rem var(--sans); color: var(--muted-ink); }
+.debate { margin: 1.2rem 0 1.6rem; }
+.debate .third { background: var(--ink); color: #fff; padding: .9rem 1rem; font-size: .98rem; margin-top: .6rem; }
+.debate .third b { font-family: var(--sans); color: #9db1ff; }
+.decision { background: var(--tint); padding: 1.1rem 1.2rem; font-size: 1.1rem; border-left: 4px solid var(--accent); }
+.take { font-size: 1.45rem; line-height: 1.35; padding: 1.2rem 0; border-top: 3px solid var(--ink); border-bottom: 3px solid var(--ink); margin: 1rem 0; }
+.recs { font-size: .98rem; }
+.recs dt { font: 800 .75rem var(--sans); text-transform: uppercase; letter-spacing: .1em; margin-top: .8rem; color: var(--accent); }
+.recs dd { margin: .2rem 0 0; }
+details.deep summary { cursor: pointer; font: 700 .85rem var(--sans); color: var(--accent); }
+.footnote { font: .8rem var(--sans); color: var(--muted-ink); }
+
+/* Depth control */
+body[data-depth="skim"] .lvl-read, body[data-depth="skim"] .lvl-deep, body[data-depth="read"] .lvl-deep { display: none !important; }
+body:not([data-depth="skim"]) .only-skim { display: none !important; }
+
+/* Scorecard */
+.card { position: sticky; top: 64px; align-self: start; padding-top: 2rem; font-family: var(--sans); max-height: calc(100vh - 70px); overflow-y: auto; }
+.card h2 { font: 800 .8rem var(--sans); letter-spacing: .14em; text-transform: uppercase; margin: 0 0 .2rem; }
+.card .sub { font-size: .78rem; color: var(--muted-ink); margin: 0 0 .8rem; }
+.meters { display: grid; gap: .4rem; margin-bottom: 1rem; }
+.meter { font-size: .72rem; }
+.meter .row { display: flex; justify-content: space-between; font-weight: 700; }
+.meter .track { height: 8px; background: #f0f0f0; border-radius: 4px; display: flex; overflow: hidden; margin-top: .15rem; }
+.meter .track span { height: 100%; transition: flex .3s; }
+.group { font: 800 .7rem var(--sans); letter-spacing: .12em; text-transform: uppercase; margin: .9rem 0 .3rem; color: var(--muted-ink); }
+.q { display: grid; grid-template-columns: 1fr auto; gap: .2rem .5rem; padding: .45rem .5rem; border-radius: 6px; font-size: .78rem; transition: background .3s; }
+.q.now { background: var(--tint); box-shadow: inset 3px 0 0 var(--accent); }
+.q .name { font-weight: 700; }
+.q .text { grid-column: 1 / -1; color: var(--muted-ink); display: none; }
+.q.now .text { display: block; }
+.q .rate { display: flex; gap: 2px; }
+.q .rate button { width: 24px; height: 24px; border: 1.5px solid var(--muted); background: #fff; border-radius: 4px; font-size: .75rem; font-weight: 800; color: var(--muted-ink); padding: 0; }
+.q .rate button[aria-pressed="true"][data-v="ok"] { background: var(--ok); border-color: var(--ok); color: #fff; }
+.q .rate button[aria-pressed="true"][data-v="unsure"] { background: var(--warn); border-color: var(--warn); color: #fff; }
+.q .rate button[aria-pressed="true"][data-v="bad"] { background: var(--bad); border-color: var(--bad); color: #fff; }
+.toggle { font-size: .75rem; display: flex; gap: .4rem; align-items: center; margin-bottom: .4rem; }
+.cardbtn { display: none; }
+
+@media (max-width: 1180px) { .layout { grid-template-columns: minmax(0, 700px) 300px; } .toc { display: none; } }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .card { position: fixed; inset: auto 0 0 0; top: auto; max-height: 70vh; background: #fff; border-top: 2px solid var(--ink); padding: 1rem 1.2rem; transform: translateY(100%); transition: transform .3s; z-index: 40; }
+  .card.open { transform: none; }
+  .cardbtn { display: block; position: fixed; right: 1rem; bottom: 1rem; z-index: 41; background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: .7rem 1.1rem; font: 700 .85rem var(--sans); box-shadow: 0 4px 14px rgba(0,0,0,.2); }
+  .pair, .glance-grid { grid-template-columns: 1fr; }
+  .who div { grid-template-columns: 1fr; gap: .2rem; }
+}
+</style>
+</head>
+<body data-depth="read">
+<div class="readbar" id="readbar"></div>
+<div class="topbar">
+  <a href="story.html" id="storylink">← Story</a>
+  <span class="depth" role="group" aria-label="Reading depth">
+    <button data-d="skim" aria-pressed="false">Skim</button><button data-d="read" aria-pressed="true">Read</button><button data-d="deep" aria-pressed="false">Deep</button>
+  </span>
+  <span class="depth-hint" id="dhint"></span>
+  <span class="sp"></span>
+  <span class="switch" id="switch"></span>
+
+</div>
+<div class="layout">
+  <nav class="toc" id="toc" aria-label="Contents"></nav>
+  <article id="article"></article>
+  <aside class="card" id="card" aria-label="Your appraisal"></aside>
+</div>
+<button class="cardbtn" id="cardbtn">Your appraisal ▲</button>
+
+<script src="data/cases.js"></script>
+<script src="data/extras.js"></script>
+<script src="shared/model.js"></script>
+<script src="shared/viz.js"></script>
+<script src="shared/checklist.js"></script>
+<script>
+(function () {
+  const slug = caseSlug();
+  const M = buildModel(slug), X = M.extras;
+  document.title = M.title + " · Design C: Layered dossier";
+  document.getElementById("storylink").href = "story.html?case=" + slug;
+  const shortName = (c) => ({ "navier-stokes": "Navier–Stokes", "long-tail-research": "Long-Tail Research", "virtual-lab": "Virtual Lab", "undue-influence": "Undue Influence", "morally-inadmissible": "Morally Inadmissible", "word-weaponization": "Word Weaponization" })[c.slug] || c.title.replace(/:.*$/, "");
+  document.getElementById("switch").innerHTML = Object.values(window.CASES).map((c) => `<a href="?case=${c.slug}" data-case="${c.slug}" title="${c.title.replace(/"/g, "&quot;")}"${c.slug === slug ? ' aria-current="page"' : ""}>${shortName(c)}</a>`).join("");
+  const S = (k) => STATUS[k] || STATUS.other;
+  const dd = (n) => M.deepDives.find((d) => d.n === n);
+  const tag = (key) => (CHECK_MAP[key] || []).map((n) => `<span class="margin-tag" title="${CHECKLIST[n - 1].name}">Q${n}</span>`).join("");
+  const secs = [];
+  const sec = (id, key, title, inner) => { secs.push({ id, title }); return `<section class="sec" id="${id}" data-check="${key}"><h2><span class="n">${String(secs.length).padStart(2, "0")}</span>${title}${tag(key)}</h2>${inner}</section>`; };
+
+  let h = `<header class="mast"><div class="kicker">${X.kicker || "Case study"}</div><h1>${M.title}</h1>
+    <p class="dek">${X.hook || firstSentence(M.background[0]?.html)}</p>
+    <div class="verdict"><b>${M.label.tag}</b><span>${M.label.html}</span></div>
+    ${M.callouts.map((c) => `<p class="callout lvl-read">${c}</p>`).join("")}</header>`;
+
+  // At a glance
+  h += `<section class="glance" id="glance"><h2>At a glance</h2>
+    ${X.stats ? `<div class="stats">${X.stats.map((s) => `<div><b>${s.n}</b>${s.l}</div>`).join("")}</div>` : ""}
+    <div class="glance-grid"><div><div id="donut"></div><ul class="legend" id="legend"></ul></div><div id="glanceviz"></div></div>
+    ${X.dumbbell ? `<div class="lvl-read" style="margin-top:1rem"><div class="footnote">AI belief before → after seeing the data</div><div id="dumb"></div></div>` : ""}</section>`;
+  secs.push({ id: "glance", title: "At a glance" });
+
+  // 1 Story
+  const steps = X.steps || [];
+  h += sec("story", "story", "What happened",
+    (steps.length ? `<ol class="storylist only-skim">${steps.slice(0, 5).map((s) => `<li>${s.html}</li>`).join("")}</ol>` : `<p class="only-skim">${firstSentence(M.background[0]?.html)}</p>`) +
+    `<div class="lvl-read">${renderBlocks(M.background)}</div>`);
+
+  // 2 Who
+  h += sec("who", "who", "Who did what", `<div class="who">${M.who.map((w) => `<div><b>${w.role}</b><span>${w.text}</span></div>`).join("")}</div>`);
+
+  // 3 Claims
+  const keys = [...new Set(M.claims.map((c) => c.key))];
+  h += sec("claims", "claims", "Claims and their status",
+    `<div class="chips" id="chips"><button aria-pressed="true" data-k="all">All ${M.claims.length}</button>${keys.map((k) => `<button aria-pressed="false" data-k="${k}"><span class="dot" style="background:${S(k).color}"></span>${S(k).label}</button>`).join("")}</div>` +
+    M.claims.map((c) => `<div class="claim" data-k="${c.key}"><div class="top"><span>${c.claim}</span><span class="pill" style="background:${S(c.key).color}">${S(c.key).label}</span></div><div class="ev lvl-read">${c.evidence}</div></div>`).join(""));
+
+  // 4 Risks
+  h += sec("risks", "risks", "Harm and risk",
+    `<div class="only-skim" id="riskbar"></div><table class="risktable lvl-read"><thead><tr><th>Risk</th><th>Who is affected</th><th>Status</th></tr></thead><tbody>${M.risks.map((r) => `<tr><td>${r.risk}</td><td>${r.who}</td><td><span class="dot" style="background:${S(r.key).color}"></span>${stripTags(r.status)}</td></tr>`).join("")}</tbody></table>`);
+
+  // Deep dives
+  const d1 = dd(1);
+  if (d1) h += sec("dd1", "dd1", d1.title,
+    `<p class="lead">${stripTags(d1.question)}</p><div class="pair"><div class="reading"><h4>Reading</h4>${d1.reading}</div><div class="lvl-read"><h4>Push back</h4>${d1.pushback}</div></div>
+    <div class="lvl-deep">${renderBlocks(d1.body)}</div>${d1.discussion ? `<p class="discuss lvl-read"><b>For discussion:</b> ${d1.discussion}</p>` : ""}`);
+  const d2 = dd(2);
+  if (d2) h += sec("dd2", "dd2", d2.title,
+    `${d2.question ? `<p class="lead">${stripTags(d2.question)}</p>` : ""}
+    <ul class="only-skim">${(d2.list?.items || []).map((i) => `<li>${leadSplit(i).lead || firstSentence(i)}</li>`).join("")}</ul>
+    <div class="lvl-read">${d2.list ? renderBlocks([d2.list]) : ""}</div>
+    ${d2.table ? `<div class="lvl-deep">${renderBlocks([d2.table])}</div>` : ""}${d2.discussion ? `<p class="discuss lvl-read"><b>For discussion:</b> ${d2.discussion}</p>` : ""}`);
+  const d3 = dd(3);
+  if (d3 && d3.table) h += sec("dd3", "dd3", d3.title,
+    d3.table.rows.map((r) => `<div class="issue"><b>${r[0]}</b> <span class="who-c">· ${stripTags(r[1])}</span><div class="lvl-read">${r[2]}</div></div>`).join("") +
+    (d3.discussion ? `<p class="discuss lvl-read"><b>For discussion:</b> ${d3.discussion}</p>` : ""));
+  const d4 = dd(4);
+  if (d4) h += sec("dd4", "dd4", d4.title, d4.debates.map((d) => `<div class="debate"><h3>${d.title}</h3>
+    <div class="pair lvl-read"><div><h4>A · ${d.a?.label || ""}</h4><ul>${(d.a?.points || []).map((p) => `<li>${p}</li>`).join("")}</ul></div><div><h4>B · ${d.b?.label || ""}</h4><ul>${(d.b?.points || []).map((p) => `<li>${p}</li>`).join("")}</ul></div></div>
+    <div class="third"><b>A third framing.</b> ${d.third}</div></div>`).join(""));
+
+  // Decision & takeaway
+  h += sec("decide", "", "Decision point", `<p class="decision">${M.decision}</p>${M.activity ? `<div class="lvl-read"><h4>Classroom activity · ${M.activity.title}</h4><p>${M.activity.html}</p></div>` : ""}`);
+  const auds = [...new Set(M.recs.map((r) => r.audience))];
+  h += sec("take", "", "Takeaway and recommendations", `<p class="take">${M.takeaway}</p>
+    <dl class="recs lvl-read">${auds.map((a) => `<dt>${a}</dt>${M.recs.filter((r) => r.audience === a).map((r) => `<dd>${r.action}</dd>`).join("")}`).join("")}</dl>
+    <div class="lvl-read"><h4>What a scientist needs to know</h4><ul>${M.scientist.map((s) => `<li>${s}</li>`).join("")}</ul></div>`);
+  h += sec("more", "", "Sources and notes", `<p class="footnote only-skim">Switch to <b>Deep</b> to see sources, extra discussion questions and verification notes.</p>
+    <div class="lvl-read"><details class="deep"><summary>Sources</summary>${renderBlocks(M.sources)}</details></div>
+    <div class="lvl-deep">${M.extraSections.map((s) => `<h3>${s.title}</h3>${renderBlocks(s.blocks)}`).join("")}${M.note ? `<h3>Before teaching</h3><p>${M.note}</p>` : ""}</div>
+    <p class="footnote">Rendered from <code>${M.file}</code>.</p>`);
+
+  document.getElementById("article").innerHTML = h;
+  document.getElementById("toc").innerHTML = secs.map((s) => `<a href="#${s.id}" data-id="${s.id}">${s.title}</a>`).join("") + `<div class="rt" id="rt"></div>`;
+
+  // Glance visuals
+  const counts = vizDonut(document.getElementById("donut"), M.claims, 160);
+  document.getElementById("legend").innerHTML = Object.entries(counts).map(([k, v]) => `<li><i style="background:${S(k).color}"></i>${S(k).label} · ${v}</li>`).join("");
+  const gv = document.getElementById("glanceviz");
+  if (X.viz === "timeline") vizTimeline(gv, X.timeline, X.timeline.length - 1, { width: 520, height: 300 });
+  else if (X.viz === "flow") vizFlow(gv, X.flow, X.flow.stages.length - 1, { showGates: true });
+  else vizStatusBar(gv, M.risks);
+  if (X.dumbbell) vizDumbbell(document.getElementById("dumb"), X.dumbbell);
+  const rb = document.getElementById("riskbar"); if (rb) vizStatusBar(rb, M.risks);
+
+  // Claim filter
+  document.querySelectorAll("#chips button").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll("#chips button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    document.querySelectorAll(".claim").forEach((c) => (c.style.display = b.dataset.k === "all" || c.dataset.k === b.dataset.k ? "" : "none"));
+  }));
+
+  // Depth switch
+  const dhint = { skim: "≈ 3 min · the essentials", read: "≈ 12 min · the full case", deep: "everything, with sources" };
+  const setDepth = (d) => {
+    document.body.dataset.depth = d;
+    document.querySelectorAll(".depth button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.d === d));
+    document.getElementById("dhint").textContent = dhint[d];
+    const words = document.getElementById("article").innerText.split(/\s+/).length;
+    document.getElementById("rt").textContent = `${Math.max(1, Math.round(words / 230))} min at this depth`;
+    localStorage.setItem("c-depth", d);
+  };
+  document.querySelectorAll(".depth button").forEach((b) => b.addEventListener("click", () => setDepth(b.dataset.d)));
+  setDepth(new URLSearchParams(location.search).get("depth") || localStorage.getItem("c-depth") || "read");
+
+  // Scorecard
+  const store = "c-score-" + slug;
+  const scores = JSON.parse(localStorage.getItem(store) || "{}");
+  let shortOnly = false;
+  function renderCard(active) {
+    const qs = CHECKLIST.filter((q) => !shortOnly || SHORT_FORM.includes(q.n));
+    const meter = (g) => {
+      const list = CHECKLIST.filter((q) => q.g === g && (!shortOnly || SHORT_FORM.includes(q.n)));
+      const c = { ok: 0, unsure: 0, bad: 0 }; list.forEach((q) => scores[q.n] && c[scores[q.n]]++);
+      const rest = list.length - c.ok - c.unsure - c.bad;
+      return `<div class="meter"><div class="row"><span>${g} · ${CHECK_GROUPS[g]}</span><span>${list.length - rest}/${list.length}</span></div><div class="track"><span style="flex:${c.ok};background:var(--ok)"></span><span style="flex:${c.unsure};background:var(--warn)"></span><span style="flex:${c.bad};background:var(--bad)"></span><span style="flex:${rest}"></span></div></div>`;
+    };
+    const el = document.getElementById("card");
+    el.innerHTML = `<h2>Your appraisal</h2><p class="sub">Rate the case as you read. Questions relevant to the section you're in are highlighted. ✓ fine · ? unsure · ✕ a problem</p>
+      <label class="toggle"><input type="checkbox" id="short" ${shortOnly ? "checked" : ""}> Short form (6 questions)</label>
+      <div class="meters">${["A", "B", "C"].map(meter).join("")}</div>
+      ${["A", "B", "C"].map((g) => `<div class="group">${g} · ${CHECK_GROUPS[g]}</div>` + qs.filter((q) => q.g === g).map((q) => `<div class="q ${active.includes(q.n) ? "now" : ""}" data-n="${q.n}"><span class="name">${q.n}. ${q.name}</span><span class="rate">${["ok", "unsure", "bad"].map((v) => `<button data-v="${v}" aria-pressed="${scores[q.n] === v}" aria-label="${q.name}: ${v}">${{ ok: "✓", unsure: "?", bad: "✕" }[v]}</button>`).join("")}</span><span class="text">${q.q}</span></div>`).join("")).join("")}
+      <p class="sub" style="margin-top:1rem">The case authors' overall label: <b>${M.label.tag}</b>. Saved only in this browser.</p>`;
+    el.querySelector("#short").onchange = (e) => { shortOnly = e.target.checked; renderCard(active); };
+    el.querySelectorAll(".rate button").forEach((b) => (b.onclick = () => { const n = b.closest(".q").dataset.n; scores[n] = scores[n] === b.dataset.v ? undefined : b.dataset.v; localStorage.setItem(store, JSON.stringify(scores)); renderCard(active); }));
+    const first = el.querySelector(".q.now"); if (first && innerWidth > 860) first.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+  let activeKey = null;
+  renderCard([]);
+  document.getElementById("cardbtn").onclick = () => document.getElementById("card").classList.toggle("open");
+
+  // Section tracking: TOC, scorecard highlights, read bar
+  const secEls = [...document.querySelectorAll(".sec, .glance")];
+  const tocLinks = [...document.querySelectorAll(".toc a")];
+  const onScroll = () => {
+    const de = document.documentElement; document.getElementById("readbar").style.width = (de.scrollTop / (de.scrollHeight - de.clientHeight)) * 100 + "%";
+    let cur = secEls[0]; secEls.forEach((s) => { if (s.getBoundingClientRect().top < innerHeight * 0.35) cur = s; });
+    tocLinks.forEach((a) => a.classList.toggle("on", a.dataset.id === cur.id));
+    const k = cur.dataset.check || "";
+    if (k !== activeKey) { activeKey = k; renderCard(CHECK_MAP[k] || []); }
+  };
+  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+  applyGlossary(document.getElementById("article"), X.glossary);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study · Story</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+:root {
+  --paper: #fbf5ea; --ink: #1d1a16; --muted: #c9bfae; --muted-ink: #6d655a; --line: #e3d9c8;
+  --accent: #e4572e; --accent2: #2a7f86; --ok: #2a9d5c; --bad: #d1342f;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+body { background: var(--paper); color: var(--ink); font-family: var(--serif); font-size: 19px; line-height: 1.6; }
+.progress { position: fixed; top: 0; left: 0; height: 5px; background: var(--accent); width: 0; z-index: 30; }
+.topnav { position: fixed; top: 5px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: .5rem 1.2rem; font-family: var(--sans); font-size: .8rem; z-index: 20; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(6px); }
+.topnav a { text-decoration: none; font-weight: 600; }
+.switch a { margin-left: .8rem; padding: .25rem .6rem; border-radius: 999px; border: 1.5px solid var(--ink); }
+.switch a[aria-current] { background: var(--ink); color: var(--paper); }
+.chapnav { position: fixed; right: 14px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 20; }
+.chapnav a { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--ink); display: block; position: relative; }
+.chapnav a.on { background: var(--accent); border-color: var(--accent); }
+.chapnav a span { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font: 600 .75rem var(--sans); background: var(--ink); color: var(--paper); padding: .2rem .5rem; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.chapnav a:hover span, .chapnav a:focus span { opacity: 1; }
+
+/* Hero */
+.hero { min-height: 100vh; display: grid; place-items: center; padding: 6rem 1.5rem 3rem; text-align: center; position: relative; overflow: hidden; }
+.hero .kicker { font: 700 .85rem var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.hero h1 { font-size: clamp(2.8rem, 8vw, 6.4rem); line-height: .95; margin: .3em 0 .4em; letter-spacing: -.02em; max-width: 14ch; margin-inline: auto; }
+.hero .hook { font-size: clamp(1.1rem, 2.2vw, 1.45rem); max-width: 40ch; margin: 0 auto; }
+.stamp { display: inline-block; margin-top: 1.6rem; border: 3px solid var(--accent); color: var(--accent); font: 800 1rem var(--sans); letter-spacing: .12em; text-transform: uppercase; padding: .35rem 1rem; transform: rotate(-4deg); border-radius: 6px; }
+.stamp-note { font: .9rem var(--sans); color: var(--muted-ink); max-width: 46ch; margin: .8rem auto 0; }
+.cue { margin-top: 2.5rem; font: 600 .8rem var(--sans); letter-spacing: .1em; text-transform: uppercase; animation: bob 1.6s infinite; }
+@keyframes bob { 50% { transform: translateY(6px); } }
+.blob { position: absolute; border-radius: 50%; filter: blur(2px); opacity: .18; z-index: -1; }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.4rem; max-width: 1050px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+.stat { border-top: 4px solid var(--ink); padding-top: .6rem; opacity: 0; transform: translateY(16px); transition: .6s; }
+.stat.in { opacity: 1; transform: none; }
+.stat b { display: block; font: 800 clamp(1.9rem, 3.4vw, 2.7rem) var(--sans); letter-spacing: -.02em; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat span { font: .9rem var(--sans); color: var(--muted-ink); }
+
+/* Chapter headings */
+.chapter { padding: 4rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+.chap-head { text-align: center; margin-bottom: 2.5rem; }
+.chap-head small { font: 700 .8rem var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--accent2); }
+.chap-head h2 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.05; margin: .2em 0; }
+.chap-head p { font-size: 1.1rem; color: var(--muted-ink); max-width: 46ch; margin: 0 auto; }
+
+/* Scrollytelling */
+.scrolly { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 3rem; max-width: 1150px; margin: 0 auto; padding: 0 1.5rem; }
+.steps { padding: 30vh 0 40vh; }
+.step { background: #fff; border: 2px solid var(--ink); border-radius: 14px; padding: 1.2rem 1.4rem; margin-bottom: 55vh; box-shadow: 6px 6px 0 var(--ink); opacity: .35; transition: opacity .3s, transform .3s; }
+.step.on { opacity: 1; transform: translateX(6px); }
+.step:last-child { margin-bottom: 10vh; }
+.figure { position: sticky; top: 12vh; height: 76vh; display: flex; flex-direction: column; justify-content: center; }
+.figure .figcap { font: 600 .8rem var(--sans); color: var(--muted-ink); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .6rem; }
+.figure .viz { width: 100%; max-height: 64vh; }
+.more { max-width: 720px; margin: 1rem auto 0; padding: 0 1.5rem; }
+details.read { border: 2px dashed var(--muted); border-radius: 12px; padding: .8rem 1.2rem; background: #fffaf1; }
+details.read summary { font: 700 .95rem var(--sans); cursor: pointer; color: var(--accent2); }
+details.read[open] summary { margin-bottom: .8rem; }
+details.read p, details.read li { font-size: 1rem; }
+
+/* Who did what */
+.who { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.2rem; }
+.who .card { border-radius: 16px; padding: 1.4rem; background: #fff; border: 2px solid var(--ink); position: relative; opacity: 0; transform: translateY(24px); transition: .6s; }
+.who .card.in { opacity: 1; transform: none; }
+.who .card h3 { font: 800 1.1rem var(--sans); margin: 0 0 .5rem; display: flex; align-items: center; gap: .5rem; }
+.who .card p { font-size: 1rem; margin: 0; }
+.ico { width: 34px; height: 34px; border-radius: 50%; display: inline-grid; place-items: center; font: 800 .9rem var(--sans); color: #fff; }
+.who .card.checkpoint { background: var(--ink); color: var(--paper); }
+
+/* Claims */
+.claims { max-width: 860px; margin: 0 auto; }
+.claims .statusbar { margin-bottom: 1.4rem; height: 34px; }
+.claim { display: grid; grid-template-columns: 1fr auto; gap: .5rem 1rem; align-items: start; padding: 1rem 0; border-bottom: 2px solid var(--line); cursor: pointer; opacity: 0; transform: translateX(-20px); transition: .5s; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; width: 100%; color: inherit; font: inherit; }
+.claim.in { opacity: 1; transform: none; }
+.claim .ctext { font-size: 1.12rem; font-weight: 600; }
+.claim .evid { grid-column: 1 / -1; font: .95rem var(--sans); color: var(--muted-ink); max-height: 0; overflow: hidden; transition: max-height .35s; }
+.claim[aria-expanded="true"] .evid { max-height: 300px; }
+.hint { text-align: center; font: .85rem var(--sans); color: var(--muted-ink); }
+
+/* Risks */
+.risks { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.risk { background: #fff; border-radius: 12px; padding: 1rem 1.1rem; border-left: 8px solid var(--accent); font-size: 1rem; }
+.risk b { display: block; font-family: var(--sans); font-size: 1rem; margin-bottom: .3rem; }
+.risk small { font-family: var(--sans); color: var(--muted-ink); }
+
+/* Deep dives */
+.dd { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; }
+.bigq { font-size: clamp(1.7rem, 4vw, 2.8rem); line-height: 1.15; text-align: center; max-width: 24ch; margin: 0 auto 2rem; font-style: italic; }
+.versus { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; max-width: 980px; margin: 0 auto; }
+.versus .side { border-radius: 16px; padding: 1.4rem; font-size: 1.02rem; }
+.versus .side h4 { font: 800 .85rem var(--sans); letter-spacing: .1em; text-transform: uppercase; margin: 0 0 .6rem; }
+.side.reading { background: var(--accent2); color: #fff; }
+.side.push { background: #fff; border: 2px solid var(--ink); }
+.discuss { text-align: center; max-width: 60ch; margin: 2rem auto 0; font: 1rem var(--sans); }
+.discuss b { color: var(--accent); }
+.stack { max-width: 820px; margin: 0 auto; counter-reset: s; }
+.stack li { list-style: none; position: relative; background: #fff; border: 2px solid var(--ink); border-radius: 14px; padding: 1.1rem 1.3rem 1.1rem 4.2rem; margin-bottom: 1rem; font-size: 1rem; opacity: 0; transform: translateY(20px); transition: .5s; }
+.stack li.in { opacity: 1; transform: none; }
+.stack li .lead { display: block; font: 800 1.05rem var(--sans); margin-bottom: .25rem; }
+.stack li .t { font-size: .98rem; }
+.stack li::before { counter-increment: s; content: counter(s); position: absolute; left: 1rem; top: 1rem; width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font: 800 1rem var(--sans); }
+.ethics { max-width: 860px; margin: 0 auto; }
+.ethics details { border-bottom: 2px solid var(--line); padding: .9rem 0; }
+.ethics summary { cursor: pointer; display: flex; justify-content: space-between; gap: 1rem; font-weight: 700; font-size: 1.1rem; list-style: none; }
+.ethics summary::-webkit-details-marker { display: none; }
+.ethics summary small { font: 600 .8rem var(--sans); color: var(--muted-ink); text-align: right; max-width: 40%; }
+.ethics summary::after { content: "+"; font: 800 1.3rem var(--sans); color: var(--accent); }
+.ethics details[open] summary::after { content: "–"; }
+.ethics details p { font-size: 1rem; margin: .6rem 0 0; }
+
+/* Debates */
+.debate { max-width: 1000px; margin: 0 auto 5rem; }
+.debate h3 { text-align: center; font-size: clamp(1.4rem, 3vw, 2rem); margin: 0 0 1.4rem; }
+.debate .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.debate .pos { border-radius: 14px; padding: 1.2rem 1.3rem; font-size: .98rem; transition: transform .3s, box-shadow .3s; background: #fff; border: 2px solid var(--ink); }
+.debate .pos h4 { font: 800 1rem var(--sans); margin: 0 0 .5rem; }
+.debate .pos ul { padding-left: 1.1rem; margin: 0; }
+.debate .pos.lean { box-shadow: 8px 8px 0 var(--accent); transform: translateY(-4px); }
+.slider { margin: 1.6rem auto 0; max-width: 560px; text-align: center; font: .9rem var(--sans); }
+.slider input { width: 100%; accent-color: var(--accent); }
+.slider .ends { display: flex; justify-content: space-between; font-weight: 700; }
+.third { margin-top: 1.4rem; background: var(--ink); color: var(--paper); border-radius: 14px; padding: 1.3rem 1.5rem; font-size: 1.02rem; opacity: 0; max-height: 0; overflow: hidden; transition: opacity .5s, max-height .6s; }
+.third.show { opacity: 1; max-height: 600px; }
+.third b { color: var(--accent); font-family: var(--sans); }
+
+.third:not(.show) + .more-btn { display: none; }
+.side.reading .more-btn, .decision .more-btn, .finale .more-btn { color: #fff; }
+.third + .more-btn { margin-left: 1.5rem; }
+/* Decision */
+.decision { background: var(--accent); color: #fff; border-radius: 24px; padding: 2.4rem; max-width: 900px; margin: 0 auto; }
+.decision p { font-size: clamp(1.2rem, 2.4vw, 1.6rem); line-height: 1.35; margin: 0 0 1rem; }
+.decision textarea { width: 100%; min-height: 90px; border-radius: 12px; border: 0; padding: .8rem; font: 1rem var(--sans); }
+.decision small { font: .8rem var(--sans); opacity: .85; }
+.activity { max-width: 900px; margin: 1.5rem auto 0; background: #fff; border: 2px dashed var(--ink); border-radius: 18px; padding: 1.4rem 1.6rem; font-size: 1rem; }
+.activity h3 { font: 800 1rem var(--sans); margin: 0 0 .4rem; }
+
+/* Recommendations */
+.tabs { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-bottom: 1.2rem; }
+.tabs button { border: 2px solid var(--ink); background: none; border-radius: 999px; padding: .4rem 1rem; font: 700 .9rem var(--sans); color: var(--ink); }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.recs { max-width: 760px; margin: 0 auto; }
+.recs li { font-size: 1.08rem; margin-bottom: .6rem; }
+
+/* Finale */
+.finale { min-height: 90vh; display: grid; place-items: center; padding: 4rem 1.5rem; background: var(--ink); color: var(--paper); text-align: center; }
+.finale small { font: 700 .85rem var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.finale p { font-size: clamp(1.6rem, 4vw, 2.8rem); line-height: 1.2; max-width: 26ch; margin: .6rem auto 0; }
+.backmatter { max-width: 760px; margin: 0 auto; padding: 4rem 1.5rem 6rem; font-size: 1rem; }
+.backmatter h2 { font: 800 1.2rem var(--sans); }
+.know li { list-style: none; margin-bottom: .5rem; }
+.know label { display: flex; gap: .6rem; cursor: pointer; }
+.know input { accent-color: var(--accent); margin-top: .35rem; }
+.note { background: #fff3d6; border-radius: 10px; padding: 1rem; font: .88rem var(--sans); }
+
+@media (max-width: 820px) {
+  .scrolly { grid-template-columns: 1fr; }
+  .figure { order: -1; top: 46px; height: 40vh; z-index: 5; background: var(--paper); }
+  .figure .viz { max-height: 34vh; }
+  .steps { padding-top: 45vh; }
+  .step { margin-bottom: 50vh; position: relative; z-index: 6; }
+  .versus, .debate .cols { grid-template-columns: 1fr; }
+  .chapnav { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<nav class="topnav" aria-label="Site">
+  <span id="sitenav"></span>
+</nav>
+<nav class="chapnav" id="chapnav" aria-label="Chapters"></nav>
+<main id="app"></main>
+
+<script src="data/cases.js"></script>
+<script src="data/extras.js"></script>
+<script src="shared/model.js"></script>
+<script src="shared/viz.js"></script>
+<script>
+(function () {
+  const slug = caseSlug();
+  const M = buildModel(slug);
+  const X = M.extras;
+  document.title = M.title + " · Story";
+  siteNav(document.getElementById("sitenav"), slug, "story.html", "dossier.html", "Read as dossier →");
+  const S = (k) => STATUS[k] || STATUS.other;
+  const pill = (c) => `<span class="pill" style="background:${S(c.key).color}">${stripTags(c.status).split(/[;(]/)[0].trim()}</span>`;
+  const icoColor = { Humans: "#2a7f86", AI: "#e4572e", Users: "#8e6bd1", Checkpoint: "#1d1a16" };
+  const chapters = [];
+  const chap = (id, small, title, intro) => { chapters.push({ id, title }); return `<header class="chap-head"><small>${small}</small><h2>${title}</h2>${intro ? `<p>${intro}</p>` : ""}</header>`; };
+
+  // Steps: from extras, or fall back to background paragraphs
+  const steps = X.steps || M.background.filter((b) => b.type === "p").map((b, i) => ({ v: i, html: b.html }));
+  const dd = (n) => M.deepDives.find((d) => d.n === n);
+
+  let h = "";
+  // HERO
+  h += `<section class="hero" id="top"><div>
+    <div class="blob" style="width:420px;height:420px;background:var(--accent);left:-120px;top:10%"></div>
+    <div class="blob" style="width:300px;height:300px;background:var(--accent2);right:-80px;bottom:8%"></div>
+    <div class="kicker">${X.kicker || "Case study"}</div>
+    <h1>${M.title}</h1>
+    <p class="hook">${X.hook || firstSentence(M.background[0]?.html)}</p>
+    <div class="stamp">${M.label.tag}</div>
+    <p class="stamp-note">${M.label.html}</p>
+    <div class="cue">Scroll to begin ↓</div></div></section>`;
+  if (X.stats) h += `<section class="stats" aria-label="Key numbers">${X.stats.map((s) => `<div class="stat"><b data-count="${s.count === false ? 0 : 1}">${s.n}</b><span>${s.l}</span></div>`).join("")}</section>`;
+
+  // STORY (scrolly)
+  h += `<section class="chapter" id="story">${chap("story", "Chapter 1", "What happened", "Scroll through the story. The graphic follows along.")}</section>
+    <div class="scrolly"><div class="steps">${steps.map((s, i) => `<div class="step" data-i="${i}">${s.html}</div>`).join("")}</div>
+    <div class="figure" aria-live="polite"><div class="figcap" id="figcap"></div><div id="fig"></div></div></div>
+    <div class="more"><details class="read"><summary>Read the full background</summary>${renderBlocks(M.background)}</details></div>`;
+
+  // WHO
+  h += `<section class="chapter" id="who">${chap("who", "Chapter 2", "Who did what?", "Separating what the machine did from what people did.")}
+    <div class="who">${M.who.map((w) => { const k = Object.keys(icoColor).find((r) => w.role.startsWith(r)) || "Humans"; return `<div class="card reveal ${k === "Checkpoint" ? "checkpoint" : ""}"><h3><span class="ico" style="background:${icoColor[k]}">${w.role[0]}</span>${w.role}</h3><p>${w.text}</p></div>`; }).join("")}</div></section>`;
+
+  // CLAIMS
+  h += `<section class="chapter" id="claims">${chap("claims", "Chapter 3", "So… is it true?", "Every claim, sorted by how well it holds up. Tap a claim to see the evidence.")}
+    <div class="claims"><div id="sbar"></div>${M.claims.map((c) => `<button class="claim reveal" aria-expanded="false"><span class="ctext">${c.claim}</span>${pill(c)}<span class="evid">${c.evidence}</span></button>`).join("")}</div></section>`;
+
+  // RISKS
+  h += `<section class="chapter" id="risks">${chap("risks", "Chapter 4", "What could go wrong", "And who would carry the cost.")}
+    <div class="risks">${M.risks.map((r) => `<div class="risk reveal" style="border-color:${S(r.key).color}"><b>${r.risk}</b><small>Affects: ${stripTags(r.who)} · ${stripTags(r.status)}</small></div>`).join("")}</div></section>`;
+
+  // DEEP DIVE 1
+  const d1 = dd(1);
+  if (d1) h += `<section class="chapter dd" id="dd1">${chap("dd1", "Deep dive 1", d1.title)}
+    <p class="bigq">${d1.question}</p>
+    <div class="versus"><div class="side reading"><h4>Our reading</h4><div class="t">${d1.reading}</div></div><div class="side push"><h4>Push back</h4><div class="t">${d1.pushback}</div></div></div>
+    <div class="more"><details class="read"><summary>Read the full argument</summary>${renderBlocks(d1.body)}</details></div>
+    ${d1.discussion ? `<p class="discuss"><b>For discussion:</b> ${d1.discussion}</p>` : ""}</section>`;
+
+  // DEEP DIVE 2
+  const d2 = dd(2);
+  if (d2) h += `<section class="chapter" id="dd2">${chap("dd2", "Deep dive 2", d2.title, d2.question ? stripTags(d2.question) : "")}
+    <ol class="stack">${(d2.list ? d2.list.items : []).map((i) => { const L = leadSplit(i); return `<li class="reveal">${L.lead ? `<b class="lead">${L.lead}</b>` : ""}<span class="t">${L.lead ? L.rest : i}</span></li>`; }).join("")}</ol>
+    ${d2.table ? `<div class="more"><details class="read"><summary>See the comparison table</summary>${renderBlocks([d2.table])}</details></div>` : ""}
+    ${d2.discussion ? `<p class="discuss"><b>For discussion:</b> ${d2.discussion}</p>` : ""}</section>`;
+
+  // DEEP DIVE 3
+  const d3 = dd(3);
+  if (d3 && d3.table) h += `<section class="chapter" id="dd3">${chap("dd3", "Deep dive 3", d3.title, "Open each issue to see who carries it.")}
+    <div class="ethics">${d3.table.rows.map((r) => `<details><summary><span>${r[0]}</span><small>${stripTags(r[1])}</small></summary><p>${r[2]}</p></details>`).join("")}</div>
+    ${d3.discussion ? `<p class="discuss"><b>For discussion:</b> ${d3.discussion}</p>` : ""}</section>`;
+
+  // DEEP DIVE 4
+  const d4 = dd(4);
+  if (d4) h += `<section class="chapter" id="dd4">${chap("dd4", "Deep dive 4", d4.title, "Read both sides, then drag the slider to say where you stand.")}
+    ${d4.debates.map((d, i) => `<div class="debate" data-i="${i}"><h3>${d.title}</h3>
+      <div class="cols"><div class="pos a"><h4>A · ${d.a?.label || ""}</h4><ul>${(d.a?.points || []).map((p) => `<li>${p}</li>`).join("")}</ul></div>
+      <div class="pos b"><h4>B · ${d.b?.label || ""}</h4><ul>${(d.b?.points || []).map((p) => `<li>${p}</li>`).join("")}</ul></div></div>
+      <div class="slider"><label class="sr-only" for="sl${i}">Where do you stand?</label><input type="range" id="sl${i}" min="-50" max="50" value="0"><div class="ends"><span>← A</span><span>Where do you stand?</span><span>B →</span></div></div>
+      <div class="third"><b>A third framing.</b> ${d.third}</div></div>`).join("")}</section>`;
+
+  // YOUR TURN
+  h += `<section class="chapter" id="turn">${chap("turn", "Your turn", "Decision point")}
+    <div class="decision"><p>${M.decision}</p><label class="sr-only" for="ans">Your answer</label><textarea id="ans" placeholder="What would you do? (Saved only in this browser.)"></textarea><small>Your answer stays on your device.</small></div>
+    ${M.activity ? `<div class="activity"><h3>Classroom activity · ${M.activity.title}</h3><p>${M.activity.html}</p></div>` : ""}</section>`;
+
+  // RECS
+  const auds = [...new Set(M.recs.map((r) => r.audience))];
+  h += `<section class="chapter" id="recs">${chap("recs", "What now", "Recommendations", "Pick who you are.")}
+    <div class="tabs" role="tablist">${auds.map((a, i) => `<button role="tab" aria-selected="${i === 0}" data-a="${a}">${a}</button>`).join("")}</div>
+    <ul class="recs" id="reclist"></ul></section>`;
+
+  // FINALE
+  h += `<section class="finale" id="end"><div><small>Takeaway</small><p>${M.takeaway}</p></div></section>
+    <section class="backmatter">
+      <h2>What a scientist needs to know</h2><ul class="know">${M.scientist.map((s, i) => `<li><label><input type="checkbox"><span>${s}</span></label></li>`).join("")}</ul>
+      ${M.extraSections.map((s) => `<details class="read"><summary>${s.title}</summary>${renderBlocks(s.blocks)}</details>`).join("")}
+      <details class="read"><summary>Sources</summary>${renderBlocks(M.sources)}</details>
+      ${M.callouts.map((c) => `<p class="note">${c}</p>`).join("")}
+      ${M.note ? `<p class="note"><b>Before teaching:</b> ${M.note}</p>` : ""}
+      <p class="hint">Rendered from <code>${M.file}</code>.</p>
+    </section>`;
+
+  document.getElementById("app").innerHTML = h;
+  chapters.unshift({ id: "top", title: "Start" }); chapters.push({ id: "end", title: "Takeaway" });
+  document.getElementById("chapnav").innerHTML = chapters.map((c) => `<a href="#${c.id}" data-id="${c.id}"><span>${c.title}</span></a>`).join("");
+
+  // Viz + steps
+  const fig = document.getElementById("fig"), cap = document.getElementById("figcap");
+  function draw(i) {
+    const st = steps[i] || {};
+    const ch = stepChart(st, X);
+    if (ch === "dumbbell") { cap.textContent = "Belief before → after seeing the data"; return vizDumbbell(fig, X.dumbbell, st.bi ?? 0); }
+    if (ch === "bars") { cap.textContent = X.bars.title; return vizBars(fig, X.bars, st.bi ?? -1); }
+    if (X.viz === "timeline") { cap.textContent = X.timelineCaption || "Timeline"; return vizTimeline(fig, X.timeline, st.v ?? i, { band: X.timelineBand }); }
+    if (X.viz === "flow") { cap.textContent = "The pipeline"; return vizFlow(fig, X.flow, st.v ?? i, { vertical: true, showGates: !!st.gates }); }
+    cap.textContent = "Claims at a glance"; vizDonut(fig, M.claims, 260);
+  }
+  draw(-1);
+  const stepEls = [...document.querySelectorAll(".step")];
+  const so = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) { stepEls.forEach((s) => s.classList.remove("on")); e.target.classList.add("on"); draw(+e.target.dataset.i); }
+  }), { rootMargin: matchMedia("(max-width: 820px)").matches ? "-72% 0px -18% 0px" : "-45% 0px -45% 0px" });
+  stepEls.forEach((s) => so.observe(s));
+
+  // Reveal on scroll
+  const ro = new IntersectionObserver((es) => es.forEach((e, k) => { if (e.isIntersecting) { setTimeout(() => e.target.classList.add("in"), k * 90); ro.unobserve(e.target); } }), { threshold: 0.2 });
+  document.querySelectorAll(".reveal, .stat, .stack li").forEach((el) => ro.observe(el));
+
+  // Count-up stats
+  document.querySelectorAll(".stat b").forEach((b) => {
+    if (b.dataset.count === "0") return;
+    const m = b.textContent.match(/^([~$]?)([\d.,]+)(.*)$/); if (!m) return;
+    const raw = m[2].replace(/,/g, ""), target = parseFloat(raw), dec = (raw.split(".")[1] || "").length;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return; io.disconnect(); let t0 = null;
+      const tick = (t) => { t0 ??= t; const p = Math.min(1, (t - t0) / 900); const v = target * (1 - Math.pow(1 - p, 3)); b.textContent = m[1] + (dec ? v.toFixed(dec) : Math.round(v).toLocaleString()) + m[3]; if (p < 1) requestAnimationFrame(tick); else b.textContent = m[1] + m[2] + m[3]; };
+      requestAnimationFrame(tick);
+    }); io.observe(b);
+  });
+
+  vizStatusBar(document.getElementById("sbar"), M.claims);
+  document.querySelectorAll(".claim").forEach((c) => c.addEventListener("click", () => c.setAttribute("aria-expanded", c.getAttribute("aria-expanded") === "true" ? "false" : "true")));
+
+  // Debates
+  document.querySelectorAll(".debate").forEach((d) => {
+    const r = d.querySelector("input"), a = d.querySelector(".pos.a"), b = d.querySelector(".pos.b"), third = d.querySelector(".third");
+    r.addEventListener("input", () => { const v = +r.value; a.classList.toggle("lean", v < -10); b.classList.toggle("lean", v > 10); if (Math.abs(v) > 10) third.classList.add("show"); });
+  });
+
+  // Recs tabs
+  const showRecs = (a) => { document.getElementById("reclist").innerHTML = M.recs.filter((r) => r.audience === a).map((r) => `<li>${r.action}</li>`).join(""); };
+  document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => { document.querySelectorAll(".tabs button").forEach((x) => x.setAttribute("aria-selected", x === b)); showRecs(b.dataset.a); }));
+  if (auds[0]) showRecs(auds[0]);
+
+  // Decision answer persistence
+  const ans = document.getElementById("ans"), key = "a-ans-" + slug;
+  ans.value = localStorage.getItem(key) || ""; ans.addEventListener("input", () => localStorage.setItem(key, ans.value));
+
+  // Progress + chapter nav
+  const prog = document.getElementById("progress"), dots = [...document.querySelectorAll("#chapnav a")];
+  const secs = chapters.map((c) => document.getElementById(c.id)).filter(Boolean);
+  addEventListener("scroll", () => {
+    const h = document.documentElement; prog.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100 + "%";
+    let cur = secs[0]; secs.forEach((s) => { if (s.getBoundingClientRect().top < innerHeight * 0.4) cur = s; });
+    dots.forEach((d) => d.classList.toggle("on", d.dataset.id === cur.id));
+  }, { passive: true });
+
+  // Keep visible text light: clamp long passages, trim long lists.
+  const app = document.getElementById("app");
+  clampLong(app, ".who .card p", { chars: 150, lines: 3 });
+  clampLong(app, ".versus .side .t", { chars: 260, lines: 5 });
+  clampLong(app, ".stack li .t", { chars: 130, lines: 2 });
+  clampLong(app, ".third", { chars: 320, lines: 4 });
+  clampLong(app, ".activity p", { chars: 220, lines: 3 });
+  clampLong(app, ".decision p", { chars: 320, lines: 4 });
+  trimLists(app, ".debate .pos ul", 2);
+  applyGlossary(app, X.glossary);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study · Design B: Story cards</title>
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+:root {
+  --paper: #ffffff; --ink: #0b2e3a; --muted: #b9c6cb; --muted-ink: #52666e; --line: #dbe4e7;
+  --bg: #ffd166; --accent: #ef476f; --accent2: #118ab2; --ok: #06a77d; --bad: #d1342f;
+  --sans: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 18px; line-height: 1.5; display: flex; flex-direction: column; overflow: hidden; }
+header { display: flex; align-items: center; gap: 1rem; padding: .7rem 1.2rem; flex-wrap: wrap; }
+header .home { font-weight: 800; text-decoration: none; font-size: .85rem; }
+header .title { font-weight: 800; font-size: .95rem; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.switch a { font-size: .8rem; font-weight: 700; margin-left: .4rem; padding: .25rem .6rem; border-radius: 999px; border: 2px solid var(--ink); text-decoration: none; }
+.switch a[aria-current] { background: var(--ink); color: #fff; }
+.chapters { display: flex; gap: 4px; padding: 0 1.2rem; overflow-x: auto; }
+.chapters button { flex: 1; min-width: 74px; border: 0; background: none; padding: .35rem 0 0; text-align: left; font-size: .7rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); opacity: .55; }
+.chapters button .bar { display: block; height: 6px; border-radius: 3px; background: rgba(11, 46, 58, .18); margin-bottom: .3rem; overflow: hidden; }
+.chapters button .bar i { display: block; height: 100%; width: 0; background: var(--ink); transition: width .3s; }
+.chapters button.on { opacity: 1; }
+main { flex: 1; display: grid; place-items: center; padding: 1rem; position: relative; min-height: 0; }
+.card { width: min(780px, 100%); max-height: 100%; overflow-y: auto; background: var(--paper); border: 3px solid var(--ink); border-radius: 22px; box-shadow: 10px 10px 0 var(--ink); padding: clamp(1.3rem, 4vw, 2.6rem); animation: in .35s ease-out; position: relative; }
+.card.back { animation: inback .35s ease-out; }
+@keyframes in { from { opacity: 0; transform: translateX(40px) rotate(1.5deg); } }
+@keyframes inback { from { opacity: 0; transform: translateX(-40px) rotate(-1.5deg); } }
+.eyebrow { font-size: .75rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--accent2); margin-bottom: .5rem; }
+.card h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1; margin: .1em 0 .4em; letter-spacing: -.02em; }
+.card h2 { font-size: clamp(1.5rem, 3.6vw, 2.2rem); line-height: 1.1; margin: 0 0 .7rem; letter-spacing: -.01em; }
+.card p { margin: 0 0 .9rem; }
+.big { font-size: clamp(1.2rem, 2.6vw, 1.5rem); line-height: 1.35; }
+.label-chip { display: inline-block; background: var(--accent); color: #fff; font-weight: 800; padding: .3rem .9rem; border-radius: 8px; transform: rotate(-2deg); letter-spacing: .06em; text-transform: uppercase; font-size: .9rem; }
+.muted { color: var(--muted-ink); font-size: .92rem; }
+footer { display: flex; justify-content: space-between; align-items: center; padding: .7rem 1.2rem 1rem; gap: 1rem; }
+footer button, .btn { border: 3px solid var(--ink); background: #fff; color: var(--ink); border-radius: 14px; padding: .6rem 1.2rem; font-weight: 800; box-shadow: 4px 4px 0 var(--ink); transition: transform .1s, box-shadow .1s; }
+footer button:active, .btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+footer button:disabled { opacity: .4; }
+footer .next { background: var(--ink); color: #fff; }
+footer .count { font-size: .8rem; font-weight: 700; }
+.btn.primary { background: var(--accent); color: #fff; }
+.btn.small { padding: .35rem .8rem; font-size: .85rem; box-shadow: 3px 3px 0 var(--ink); }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .8rem; margin-top: 1rem; }
+.stats div { background: var(--bg); border-radius: 14px; padding: .8rem; animation: pop .5s backwards; }
+.stats b { display: block; font-size: 2rem; font-weight: 900; letter-spacing: -.03em; }
+.stats span { font-size: .85rem; }
+@keyframes pop { from { opacity: 0; transform: scale(.7); } }
+
+/* Viz box */
+.vizbox { background: #f6f9fa; border-radius: 16px; padding: .8rem; margin: 0 0 1.1rem; }
+.vizbox .viz { width: 100%; max-height: 260px; }
+
+/* Who */
+.who { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .8rem; }
+.who button { text-align: left; border: 3px solid var(--ink); border-radius: 16px; background: #fff; padding: 1rem; color: var(--ink); }
+.who button b { display: block; font-size: 1.1rem; margin-bottom: .2rem; }
+.who button .txt { font-size: .92rem; display: none; }
+.who button[aria-expanded="true"] { background: var(--ink); color: #fff; }
+.who button[aria-expanded="true"] .txt { display: block; }
+.who button .tap { font-size: .75rem; font-weight: 700; opacity: .6; }
+.who button[aria-expanded="true"] .tap { display: none; }
+
+/* Claim game */
+.claimtext { font-size: clamp(1.3rem, 3vw, 1.75rem); font-weight: 800; line-height: 1.25; margin: .4rem 0 1.2rem; }
+.options { display: flex; flex-wrap: wrap; gap: .5rem; }
+.options button { border: 3px solid var(--ink); background: #fff; border-radius: 999px; padding: .45rem 1rem; font-weight: 800; color: var(--ink); }
+.options button.right { background: var(--ok); color: #fff; border-color: var(--ok); }
+.options button.wrong { background: var(--bad); color: #fff; border-color: var(--bad); text-decoration: line-through; }
+.options button:disabled { cursor: default; }
+.reveal { margin-top: 1.1rem; padding: 1rem; border-radius: 14px; background: #f6f9fa; display: none; }
+.reveal.show { display: block; animation: pop .35s; }
+.score { position: absolute; top: 1rem; right: 1.2rem; font-weight: 900; background: var(--bg); border-radius: 999px; padding: .2rem .8rem; font-size: .85rem; }
+
+/* Risks */
+.risks { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .6rem; }
+.risks div { border-radius: 14px; padding: .8rem .9rem; color: #fff; font-weight: 700; font-size: .95rem; }
+.risks small { display: block; font-weight: 500; opacity: .9; margin-top: .3rem; }
+
+/* Flip */
+.flipper { display: grid; gap: .8rem; }
+.face { border-radius: 16px; padding: 1.1rem 1.2rem; font-size: 1.02rem; }
+.face h4 { margin: 0 0 .4rem; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; }
+.face.reading { background: var(--accent2); color: #fff; }
+.face.push { background: #fff; border: 3px dashed var(--ink); }
+.hidden { display: none !important; }
+
+/* Inner tabs (dd2, dd3) */
+.innertabs { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+.innertabs button { border: 2px solid var(--ink); background: #fff; border-radius: 10px; padding: .3rem .7rem; font-weight: 800; font-size: .85rem; color: var(--ink); text-align: left; }
+.innertabs button[aria-selected="true"] { background: var(--ink); color: #fff; }
+.panel { background: #f6f9fa; border-radius: 14px; padding: 1rem 1.1rem; min-height: 120px; }
+.panel .who-carries { font-size: .8rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .08em; }
+
+/* Debate vote */
+.vote { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.vote button { text-align: left; border: 3px solid var(--ink); border-radius: 16px; background: #fff; padding: 1rem; color: var(--ink); font-size: .9rem; }
+.vote button b { display: block; font-size: 1rem; margin-bottom: .4rem; }
+.vote button ul { margin: 0; padding-left: 1.1rem; }
+.vote button.chosen { background: var(--ink); color: #fff; box-shadow: 6px 6px 0 var(--accent); }
+.third { margin-top: 1rem; border-radius: 16px; background: var(--accent); color: #fff; padding: 1rem 1.2rem; font-size: 1rem; display: none; }
+.third.show { display: block; animation: pop .35s; }
+
+/* Decision */
+.choices { display: grid; gap: .6rem; margin-top: .6rem; }
+.choices button { text-align: left; border: 3px solid var(--ink); border-radius: 14px; background: #fff; padding: .8rem 1rem; font-weight: 700; color: var(--ink); }
+.choices button.chosen { background: var(--accent); color: #fff; border-color: var(--accent); }
+textarea { width: 100%; min-height: 110px; border: 3px solid var(--ink); border-radius: 14px; padding: .8rem; font: inherit; font-size: 1rem; }
+
+/* Takeaway */
+.final { background: var(--ink); color: #fff; }
+.final .eyebrow { color: var(--bg); }
+.final .big { font-size: clamp(1.4rem, 3.2vw, 2rem); }
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .6rem; margin: 1rem 0; }
+.summary div { background: rgba(255, 255, 255, .1); border-radius: 12px; padding: .7rem; font-size: .9rem; }
+.summary b { display: block; font-size: 1.5rem; color: var(--bg); }
+details { margin-top: .8rem; }
+details summary { cursor: pointer; font-weight: 800; }
+.final details, .final a { color: #fff; }
+.recs li { margin-bottom: .4rem; }
+@media (max-width: 640px) { .vote { grid-template-columns: 1fr; } .card { box-shadow: 6px 6px 0 var(--ink); } body { font-size: 16px; } }
+</style>
+</head>
+<body>
+<header>
+  <a class="home" href="../index.html">← Designs</a>
+  <span class="title" id="title"></span>
+  <span class="switch"><a href="?case=navier-stokes" data-case="navier-stokes">Navier–Stokes</a><a href="?case=long-tail-research" data-case="long-tail-research">Long-Tail</a></span>
+</header>
+<nav class="chapters" id="chapters" aria-label="Chapters"></nav>
+<main id="stage" aria-live="polite"></main>
+<footer>
+  <button id="prev" aria-label="Previous card">← Back</button>
+  <span class="count" id="count"></span>
+  <button id="next" class="next" aria-label="Next card">Next →</button>
+</footer>
+
+<script src="../data/cases.js"></script>
+<script src="../data/extras.js"></script>
+<script src="../shared/model.js"></script>
+<script src="../shared/viz.js"></script>
+<script>
+(function () {
+  const slug = caseSlug();
+  const M = buildModel(slug), X = M.extras;
+  document.title = M.title + " · Design B: Story cards";
+  document.getElementById("title").textContent = M.title;
+  document.querySelectorAll(".switch a").forEach((a) => { if (a.dataset.case === slug) a.setAttribute("aria-current", "page"); });
+  const S = (k) => STATUS[k] || STATUS.other;
+  const state = { score: 0, answered: 0, votes: {}, choice: null };
+  const dd = (n) => M.deepDives.find((d) => d.n === n);
+  const cards = [];   // {chapter, render(el), mount?(el)}
+  const add = (chapter, render, mount) => cards.push({ chapter, render, mount });
+
+  // ---- STORY
+  add("Story", () => `<div class="eyebrow">${X.kicker || "Case study"}</div><h1>${M.title}</h1><p class="big">${X.hook || firstSentence(M.background[0]?.html)}</p><span class="label-chip">${M.label.tag}</span><p class="muted" style="margin-top:.8rem">${M.label.html}</p>${M.callouts.map((c) => `<p class="muted">${c}</p>`).join("")}`);
+  if (X.stats) add("Story", () => `<div class="eyebrow">In numbers</div><h2>The case at a glance</h2><div class="stats">${X.stats.map((s, i) => `<div style="animation-delay:${i * 0.12}s"><b>${s.n}</b><span>${s.l}</span></div>`).join("")}</div>`);
+  const steps = X.steps || M.background.filter((b) => b.type === "p").map((b, i) => ({ v: i, html: b.html }));
+  steps.forEach((st, i) => add("Story", () => `<div class="eyebrow">What happened · ${i + 1} of ${steps.length}</div><div class="vizbox" data-step="${i}"></div><p class="big">${st.html}</p>`, (el) => {
+    const box = el.querySelector(".vizbox");
+    if (st.chart && X.dumbbell) vizDumbbell(box, X.dumbbell, 0);
+    else if (X.viz === "timeline") vizTimeline(box, X.timeline, st.v, { width: 640, height: 340 });
+    else if (X.viz === "flow") vizFlow(box, X.flow, st.v, { showGates: !!st.gates });
+    else box.remove();
+  }));
+  add("Story", () => `<div class="eyebrow">Want the full story?</div><h2>The complete background</h2><details><summary>Open the full text</summary>${renderBlocks(M.background)}</details><p class="muted" style="margin-top:1rem">Or keep going: next, who did what.</p>`);
+
+  // ---- PEOPLE
+  add("People", () => `<div class="eyebrow">Who did what</div><h2>Tap each to see their part</h2><div class="who">${M.who.map((w) => `<button aria-expanded="false"><b>${w.role}</b><span class="tap">Tap to reveal</span><span class="txt">${w.text}</span></button>`).join("")}</div>`,
+    (el) => el.querySelectorAll(".who button").forEach((b) => b.addEventListener("click", () => b.setAttribute("aria-expanded", b.getAttribute("aria-expanded") !== "true"))));
+
+  // ---- CLAIMS (game)
+  const optionKeys = [...new Set(["verified", "reported", "claimed", "contested", "disputed", "not-shown", ...M.claims.map((c) => c.key)])];
+  add("Claims", () => `<div class="eyebrow">Claim check</div><h2>Can you tell what holds up?</h2><p class="big">Next you'll see ${M.claims.length} claims made about this case. For each, guess how well it is supported. Then see the evidence.</p><div class="vizbox"><div class="statusbar">${optionKeys.map((k) => `<span style="flex:1;background:${S(k).color}">${S(k).label}</span>`).join("")}</div></div><p class="muted">Verified: confirmed by independent or peer-reviewed evidence. Reported: stated by credible sources, not independently checked. Claimed: asserted by an interested party. Contested or disputed: experts disagree, or evidence points against it. Not shown: no evidence yet.</p>`);
+  M.claims.forEach((c, i) => add("Claims", () => `<span class="score" id="score">${state.score}/${state.answered}</span><div class="eyebrow">Claim ${i + 1} of ${M.claims.length}</div><p class="claimtext">“${c.claim}”</p><p class="muted">How well supported is this?</p><div class="options">${optionKeys.map((k) => `<button data-k="${k}">${S(k).label}</button>`).join("")}</div><div class="reveal"><span class="pill" style="background:${S(c.key).color}">${stripTags(c.status)}</span><p style="margin-top:.6rem">${c.evidence}</p></div>`,
+    (el) => {
+      const opts = el.querySelectorAll(".options button"), rev = el.querySelector(".reveal");
+      if (c._done) { opts.forEach((b) => { b.disabled = true; if (b.dataset.k === c.key) b.classList.add("right"); if (b.dataset.k === c._guess && c._guess !== c.key) b.classList.add("wrong"); }); rev.classList.add("show"); }
+      opts.forEach((b) => b.addEventListener("click", () => {
+        if (c._done) return; c._done = true; c._guess = b.dataset.k; state.answered++;
+        if (b.dataset.k === c.key) state.score++;
+        opts.forEach((o) => { o.disabled = true; if (o.dataset.k === c.key) o.classList.add("right"); });
+        if (b.dataset.k !== c.key) b.classList.add("wrong");
+        rev.classList.add("show"); el.querySelector("#score").textContent = `${state.score}/${state.answered}`;
+      }));
+    }));
+
+  // ---- RISKS
+  add("Risks", () => `<div class="eyebrow">Harm and risk</div><h2>What could go wrong, and for whom</h2><div class="risks">${M.risks.map((r) => `<div style="background:${S(r.key).color}">${r.risk}<small>${stripTags(r.who)} · ${stripTags(r.status)}</small></div>`).join("")}</div>`);
+
+  // ---- DEEP DIVES
+  const d1 = dd(1);
+  if (d1) add("Deep dives", () => `<div class="eyebrow">Deep dive 1 · ${d1.title}</div><h2>${stripTags(d1.question)}</h2><p class="muted">Think about it first, then reveal.</p><div class="flipper"><button class="btn primary" id="r1">Show our reading</button><div class="face reading hidden"><h4>Our reading</h4>${d1.reading}</div><button class="btn hidden" id="r2">Now show the push back</button><div class="face push hidden"><h4>Push back</h4>${d1.pushback}</div></div><details><summary>Read the full argument</summary>${renderBlocks(d1.body)}</details>`,
+    (el) => {
+      const [r1, rd, r2, pb] = [el.querySelector("#r1"), el.querySelector(".reading"), el.querySelector("#r2"), el.querySelector(".push")];
+      r1.onclick = () => { r1.classList.add("hidden"); rd.classList.remove("hidden"); r2.classList.remove("hidden"); };
+      r2.onclick = () => { r2.classList.add("hidden"); pb.classList.remove("hidden"); };
+    });
+  const d2 = dd(2);
+  if (d2 && d2.list) add("Deep dives", () => `<div class="eyebrow">Deep dive 2 · ${d2.title}</div><h2>${d2.question ? stripTags(d2.question) : "What actually changed?"}</h2><div class="innertabs" role="tablist">${d2.list.items.map((it, i) => `<button role="tab" aria-selected="${i === 0}" data-i="${i}">${i + 1}. ${leadSplit(it).lead || "Point " + (i + 1)}</button>`).join("")}</div><div class="panel" id="p2"></div>${d2.discussion ? `<p class="muted" style="margin-top:.8rem"><b>For discussion:</b> ${d2.discussion}</p>` : ""}`,
+    (el) => {
+      const show = (i) => { el.querySelector("#p2").innerHTML = leadSplit(d2.list.items[i]).rest || d2.list.items[i]; el.querySelectorAll(".innertabs button").forEach((b) => b.setAttribute("aria-selected", +b.dataset.i === i)); };
+      el.querySelectorAll(".innertabs button").forEach((b) => (b.onclick = () => show(+b.dataset.i))); show(0);
+    });
+  const d3 = dd(3);
+  if (d3 && d3.table) add("Deep dives", () => `<div class="eyebrow">Deep dive 3 · ${d3.title}</div><h2>Pick an ethical issue</h2><div class="innertabs" role="tablist">${d3.table.rows.map((r, i) => `<button role="tab" aria-selected="${i === 0}" data-i="${i}">${stripTags(r[0])}</button>`).join("")}</div><div class="panel" id="p3"></div>${d3.discussion ? `<p class="muted" style="margin-top:.8rem"><b>For discussion:</b> ${d3.discussion}</p>` : ""}`,
+    (el) => {
+      const show = (i) => { const r = d3.table.rows[i]; el.querySelector("#p3").innerHTML = `<div class="who-carries">Who carries it: ${stripTags(r[1])}</div><p style="margin-top:.4rem">${r[2]}</p>`; el.querySelectorAll(".innertabs button").forEach((b) => b.setAttribute("aria-selected", +b.dataset.i === i)); };
+      el.querySelectorAll(".innertabs button").forEach((b) => (b.onclick = () => show(+b.dataset.i))); show(0);
+    });
+
+  // ---- DEBATES
+  const d4 = dd(4);
+  (d4 ? d4.debates : []).forEach((d, i) => add("Debates", () => `<div class="eyebrow">Debate ${i + 1} of ${d4.debates.length}</div><h2>${d.title}</h2><p class="muted">Which side convinces you more? Pick one to see a third way of looking at it.</p><div class="vote"><button data-s="a"><b>A · ${d.a?.label || ""}</b><ul>${(d.a?.points || []).map((p) => `<li>${p}</li>`).join("")}</ul></button><button data-s="b"><b>B · ${d.b?.label || ""}</b><ul>${(d.b?.points || []).map((p) => `<li>${p}</li>`).join("")}</ul></button></div><div class="third"><b>A third framing.</b> ${d.third}</div>`,
+    (el) => {
+      const btns = el.querySelectorAll(".vote button"), third = el.querySelector(".third");
+      const set = (s) => { state.votes[i] = s; btns.forEach((b) => b.classList.toggle("chosen", b.dataset.s === s)); third.classList.add("show"); };
+      if (state.votes[i]) set(state.votes[i]);
+      btns.forEach((b) => (b.onclick = () => set(b.dataset.s)));
+    }));
+
+  // ---- DECIDE
+  const opts = [...M.decision.matchAll(/\(([a-d])\)\s*(.+?)(?=,?\s*(?:or\s+)?\([a-d]\)|\?|$)/g)].map((m) => ({ k: m[1], t: m[2].replace(/[,;]\s*$/, "") }));
+  const stem = opts.length ? M.decision.split(/\(a\)/)[0] : M.decision;
+  const tail = opts.length ? (M.decision.match(/\?\s*([^?]*\?[^]*)$/) || [])[1] || "" : "";
+  add("Decide", () => `<div class="eyebrow">Decision point</div><h2>Your call</h2><p class="big">${stem}</p>${opts.length ? `<div class="choices">${opts.map((o) => `<button data-k="${o.k}"><b>(${o.k})</b> ${o.t}</button>`).join("")}</div><p class="muted hidden" id="tail" style="margin-top:1rem">${tail}</p>` : `<textarea placeholder="Write what you would do. (Stays in this browser.)"></textarea>`}`,
+    (el) => {
+      el.querySelectorAll(".choices button").forEach((b) => (b.onclick = () => { state.choice = b.dataset.k; el.querySelectorAll(".choices button").forEach((x) => x.classList.toggle("chosen", x === b)); el.querySelector("#tail")?.classList.remove("hidden"); }));
+      if (state.choice) el.querySelector(`.choices button[data-k="${state.choice}"]`)?.click();
+      const ta = el.querySelector("textarea"); if (ta) { const k = "b-ans-" + slug; ta.value = localStorage.getItem(k) || ""; ta.oninput = () => localStorage.setItem(k, ta.value); }
+    });
+  if (M.activity) add("Decide", () => `<div class="eyebrow">Classroom activity</div><h2>${M.activity.title}</h2><p>${M.activity.html}</p>`);
+
+  // ---- TAKEAWAY
+  const auds = [...new Set(M.recs.map((r) => r.audience))];
+  add("Takeaway", () => `<div class="eyebrow">What to do</div><h2>Recommendations</h2><div class="innertabs" role="tablist">${auds.map((a, i) => `<button role="tab" aria-selected="${i === 0}" data-a="${a}">${a}</button>`).join("")}</div><ul class="recs panel" id="rl"></ul><details><summary>What a scientist needs to know</summary><ul>${M.scientist.map((s) => `<li>${s}</li>`).join("")}</ul></details>`,
+    (el) => {
+      const show = (a) => { el.querySelector("#rl").innerHTML = M.recs.filter((r) => r.audience === a).map((r) => `<li>${r.action}</li>`).join(""); el.querySelectorAll(".innertabs button").forEach((b) => b.setAttribute("aria-selected", b.dataset.a === a)); };
+      el.querySelectorAll(".innertabs button").forEach((b) => (b.onclick = () => show(b.dataset.a))); if (auds[0]) show(auds[0]);
+    });
+  add("Takeaway", () => `<div class="eyebrow">Takeaway</div><p class="big">${M.takeaway}</p><div class="summary"><div><b>${state.score}/${state.answered}</b>claims you read correctly</div><div><b>${Object.keys(state.votes).length}/${d4 ? d4.debates.length : 0}</b>debates you weighed in on</div><div><b>${state.choice ? "(" + state.choice + ")" : "—"}</b>your decision</div></div>${M.extraSections.map((s) => `<details><summary>${s.title}</summary>${renderBlocks(s.blocks)}</details>`).join("")}<details><summary>Sources</summary>${renderBlocks(M.sources)}</details>${M.note ? `<details><summary>Before teaching: what to verify</summary><p>${M.note}</p></details>` : ""}<p class="muted" style="color:#cfe">Rendered from ${M.file}.</p>`, (el) => el.classList.add("final"));
+
+  // ---- Deck engine
+  const chapNames = [...new Set(cards.map((c) => c.chapter))];
+  const chapEl = document.getElementById("chapters");
+  chapEl.innerHTML = chapNames.map((n) => `<button data-c="${n}"><span class="bar"><i></i></span>${n}</button>`).join("");
+  chapEl.querySelectorAll("button").forEach((b) => (b.onclick = () => go(cards.findIndex((c) => c.chapter === b.dataset.c))));
+  const stage = document.getElementById("stage"), prev = document.getElementById("prev"), next = document.getElementById("next"), count = document.getElementById("count");
+  let cur = Math.min(+(location.hash.slice(1) || 0) || 0, cards.length - 1);
+  function go(i, back) {
+    if (i < 0 || i >= cards.length) return;
+    cur = i;
+    const c = cards[i];
+    stage.innerHTML = `<article class="card ${back ? "back" : ""}" tabindex="-1">${c.render()}</article>`;
+    const el = stage.firstElementChild;
+    if (c.mount) c.mount(el);
+    applyGlossary(el, X.glossary);
+    prev.disabled = i === 0; next.disabled = i === cards.length - 1;
+    count.textContent = `${i + 1} / ${cards.length}`;
+    chapNames.forEach((n, k) => {
+      const idx = cards.map((cc, j) => (cc.chapter === n ? j : -1)).filter((j) => j >= 0);
+      const done = idx.filter((j) => j <= i).length / idx.length;
+      const btn = chapEl.children[k]; btn.querySelector("i").style.width = done * 100 + "%"; btn.classList.toggle("on", c.chapter === n);
+    });
+    history.replaceState(null, "", `?case=${slug}#${i}`);
+  }
+  prev.onclick = () => go(cur - 1, true);
+  next.onclick = () => go(cur + 1);
+  addEventListener("keydown", (e) => { if (e.target.matches("textarea")) return; if (e.key === "ArrowRight") go(cur + 1); if (e.key === "ArrowLeft") go(cur - 1, true); });
+  let tx = null;
+  stage.addEventListener("touchstart", (e) => (tx = e.touches[0].clientX), { passive: true });
+  stage.addEventListener("touchend", (e) => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 60) dx < 0 ? go(cur + 1) : go(cur - 1, true); tx = null; });
+  go(cur);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study designs: pick one</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+:root { --paper: #fff; --ink: #16130f; --accent: #e4572e; --muted-ink: #6b645a; --sans: "Avenir Next", "Segoe UI", system-ui, sans-serif; --serif: "Iowan Old Style", Georgia, serif; }
+body { background: #f4efe6; color: var(--ink); font-family: var(--sans); line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 3rem 1.4rem 5rem; }
+h1 { font: 800 clamp(2rem, 5vw, 3.4rem) var(--serif); line-height: 1.05; margin: 0 0 .6rem; letter-spacing: -.01em; }
+.intro { font-size: 1.1rem; max-width: 66ch; color: #3a352e; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.4rem; margin: 2.4rem 0; }
+.d { background: #fff; border: 2px solid var(--ink); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
+.d .swatch { height: 150px; display: grid; place-items: center; font: 800 2rem var(--serif); position: relative; }
+.d .swatch small { position: absolute; top: .8rem; left: 1rem; font: 800 .75rem var(--sans); letter-spacing: .14em; text-transform: uppercase; }
+.d .body { padding: 1.2rem 1.3rem 1.4rem; flex: 1; display: flex; flex-direction: column; }
+.d h2 { margin: 0 0 .3rem; font-size: 1.35rem; }
+.d .tag { font-size: .85rem; color: var(--muted-ink); margin: 0 0 .8rem; }
+.d ul { padding-left: 1.1rem; margin: 0 0 1rem; font-size: .93rem; }
+.d .best { font-size: .85rem; background: #f7f3ec; border-radius: 10px; padding: .6rem .8rem; margin-bottom: 1rem; }
+.links { margin-top: auto; display: grid; gap: .5rem; }
+.links a { display: flex; justify-content: space-between; text-decoration: none; border: 2px solid var(--ink); border-radius: 12px; padding: .55rem .9rem; font-weight: 700; font-size: .92rem; }
+.links a:hover { background: var(--ink); color: #fff; }
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 14px; overflow: hidden; font-size: .92rem; }
+th, td { text-align: left; padding: .7rem .9rem; border-bottom: 1px solid #e7e0d4; vertical-align: top; }
+th { background: var(--ink); color: #fff; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
+h3 { font: 800 1.4rem var(--serif); margin: 3rem 0 1rem; }
+.how { background: #fff; border-radius: 14px; padding: 1.2rem 1.4rem; font-size: .95rem; }
+code { background: #f1ebe0; padding: .1rem .35rem; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Three ways to read a case study</h1>
+  <p class="intro">Each design renders the same content, parsed straight from the case-study markdown, as a visual, interactive, browsable page in the spirit of The Pudding's visual essays. Each is shown for <b>Navier–Stokes</b> and <b>Long-Tail Research</b>. They differ in how they keep readers interested without overwhelming them: the first <i>paces</i> the story, the second <i>chunks</i> it, the third <i>layers</i> it.</p>
+
+  <div class="grid">
+    <article class="d">
+      <div class="swatch" style="background:#fbf5ea;color:#e4572e"><small style="color:#1d1a16">Design A</small>Scrollytelling</div>
+      <div class="body">
+        <h2>A · Scrollytelling essay</h2>
+        <p class="tag">The classic Pudding format: a sticky graphic that changes as the story scrolls past.</p>
+        <ul>
+          <li>Hero with a hook, verdict stamp and animated key numbers</li>
+          <li>Sticky timeline or pipeline that advances with each story step</li>
+          <li>Claims revealed one by one with a status bar; tap to see evidence</li>
+          <li>"Reading vs push back" side by side; debates with a "where do you stand?" slider that reveals the third framing</li>
+          <li>Full text always one "Read more" away</li>
+        </ul>
+        <p class="best"><b>Best for:</b> first-time readers and public audiences; cases with a strong timeline or process.</p>
+        <div class="links"><a href="a-scrolly.html?case=navier-stokes">Navier–Stokes <span>→</span></a><a href="a-scrolly.html?case=long-tail-research">Long-Tail Research <span>→</span></a></div>
+      </div>
+    </article>
+    <article class="d">
+      <div class="swatch" style="background:#ffd166;color:#0b2e3a"><small>Design B</small>Story cards</div>
+      <div class="body">
+        <h2>B · Story cards</h2>
+        <p class="tag">One idea per card, like a guided quiz. Swipe, tap or use the arrow keys.</p>
+        <ul>
+          <li>Chapter progress bar: Story · People · Claims · Risks · Deep dives · Debates · Decide · Takeaway</li>
+          <li><b>Claim check game:</b> guess each claim's status, then see the evidence</li>
+          <li>Reveal-on-tap reading and push back; tabbed ethics issues</li>
+          <li>Vote on each debate; pick an option at the decision point</li>
+          <li>Final card sums up your score, votes and choice</li>
+        </ul>
+        <p class="best"><b>Best for:</b> classrooms and workshops, mobile, and readers who drift on long pages.</p>
+        <div class="links"><a href="b-cards.html?case=navier-stokes">Navier–Stokes <span>→</span></a><a href="b-cards.html?case=long-tail-research">Long-Tail Research <span>→</span></a></div>
+      </div>
+    </article>
+    <article class="d">
+      <div class="swatch" style="background:#fff;color:#2f54eb;border-bottom:2px solid #111"><small style="color:#111">Design C</small>Layered dossier</div>
+      <div class="body">
+        <h2>C · Layered dossier</h2>
+        <p class="tag">A newspaper-style long read with a depth switch and a live appraisal scorecard.</p>
+        <ul>
+          <li><b>Skim / Read / Deep</b> switch: about 3 minutes, about 12 minutes, or everything with sources</li>
+          <li>"At a glance" dashboard: numbers, claim-status donut, timeline or pipeline</li>
+          <li>Filter claims by status; section tags show which checklist questions apply</li>
+          <li><b>Your appraisal</b> sidebar: the 16 checklist questions highlight as you scroll; rate each and watch the sound, accountable and just meters fill</li>
+        </ul>
+        <p class="best"><b>Best for:</b> researchers and evaluators, repeat readers, and turning cases into tool evaluations.</p>
+        <div class="links"><a href="c-dossier.html?case=navier-stokes">Navier–Stokes <span>→</span></a><a href="c-dossier.html?case=long-tail-research">Long-Tail Research <span>→</span></a></div>
+      </div>
+    </article>
+  </div>
+
+  <h3>Side by side</h3>
+  <table>
+    <thead><tr><th></th><th>A · Scrollytelling</th><th>B · Story cards</th><th>C · Layered dossier</th></tr></thead>
+    <tbody>
+      <tr><td><b>How it avoids overload</b></td><td>Pacing: one step at a time, details behind "Read more"</td><td>Chunking: one card, one idea</td><td>Layering: the reader picks the depth</td></tr>
+      <tr><td><b>Main interaction</b></td><td>Scroll; sliders; tap to expand</td><td>Guess, vote, choose</td><td>Filter; switch depth; rate checklist questions</td></tr>
+      <tr><td><b>Feel</b></td><td>Editorial, cinematic</td><td>Playful, game-like</td><td>Analytical, reference</td></tr>
+      <tr><td><b>Uses the appraisal checklist</b></td><td>Implicitly</td><td>Through the claim game</td><td>Directly, as a live scorecard</td></tr>
+      <tr><td><b>Mobile</b></td><td>Good (graphic pins to top)</td><td>Best (swipe)</td><td>Good (scorecard becomes a drawer)</td></tr>
+      <tr><td><b>Extra work per new case</b></td><td>Scroll steps and a chart help most</td><td>Works from the markdown; steps optional</td><td>Works from the markdown; stats optional</td></tr>
+    </tbody>
+  </table>
+
+  <h3>How it works, and how to extend it to every case</h3>
+  <div class="how">
+    <p><b>Content comes from the markdown.</b> <code>designs/build.py</code> parses every case file into <code>designs/data/cases.js</code>. After editing a case, run <code>python3 designs/build.py</code> and reload.</p>
+    <p><b>Visual extras are optional.</b> <code>designs/data/extras.js</code> adds a hook, key numbers, short scroll steps, a timeline, pipeline or chart, and glossary terms per case. Cases without extras still render, using the background paragraphs and a claim-status chart.</p>
+    <p><b>Try other cases now.</b> Any design accepts <code>?case=</code> with <code>alphafold</code>, <code>virtual-lab</code>, <code>undue-influence</code>, <code>morally-inadmissible</code> or <code>word-weaponization</code>, for example <a href="a-scrolly.html?case=virtual-lab">a-scrolly.html?case=virtual-lab</a>.</p>
+    <p><b>No build tools, no external requests.</b> Plain HTML, CSS and JavaScript. It opens straight from disk and works on GitHub Pages. Reader answers, votes and scores are kept only in that reader's browser.</p>
+  </div>
+</div>
+</body>
+</html>
