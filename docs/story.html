@@ -14,8 +14,11 @@
 }
 body { background: var(--paper); color: var(--ink); font-family: var(--serif); font-size: 19px; line-height: 1.6; }
 .progress { position: fixed; top: 0; left: 0; height: 5px; background: var(--accent); width: 0; z-index: 30; }
-.topnav { position: fixed; top: 5px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: .5rem 1.2rem; font-family: var(--sans); font-size: .8rem; z-index: 20; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(6px); }
+.topnav { position: fixed; top: 5px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .5rem 1.2rem; font-family: var(--sans); font-size: .8rem; z-index: 20; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(6px); }
 .topnav a { text-decoration: none; font-weight: 600; }
+#sitenav { display: flex; align-items: center; gap: .5rem; min-width: 0; }
+#sitenav .casepick { min-width: 0; }
+.topnav .index-link { white-space: nowrap; }
 .switch a { margin-left: .8rem; padding: .25rem .6rem; border-radius: 999px; border: 1.5px solid var(--ink); }
 .switch a[aria-current] { background: var(--ink); color: var(--paper); }
 .chapnav { position: fixed; right: 14px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 20; }
@@ -173,6 +176,7 @@ details.read p, details.read li { font-size: 1rem; }
 <div class="progress" id="progress"></div>
 <nav class="topnav" aria-label="Site">
   <span id="sitenav"></span>
+  <a class="index-link" href="index.html">All cases</a>
 </nav>
 <nav class="chapnav" id="chapnav" aria-label="Chapters"></nav>
 <main id="app"></main>
