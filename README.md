@@ -124,7 +124,7 @@ The workshop proposed these cases, which are not yet written up. The one-line su
 | Positive, includes | **AlphaGenome** (Avsec et al., *Nature* 2026) | Unified genomic model with an open atlas of predictions |
 | Positive, includes | **Dataverse AI metadata** | AI metadata recommendations with mandatory human review |
 | Positive, includes | **Choral AI dataset** (arXiv:2412.01433) | How a community deliberates over governing an AI dataset built from its own performances |
-| Positive, excludes | **Si et al.**, *Can LLMs Generate Novel Research Ideas?* | A rigorous human study of AI ideation, including its limits |
+| Positive, excludes | **Si et al.**, (arXiv:2409.04109) *Can LLMs Generate Novel Research Ideas?* | A rigorous human study of AI ideation, including its limits |
 | Negative, includes | **Adobe photo library** (PetaPixel, 2026) | A photographer's work was used for training despite his objection, with no removal or compensation |
 | Negative, includes | **Hao et al.**, *Nature* 2026 | AI expands individual scientists' impact but narrows the field's focus |
 | Negative, includes | **Fabricated citations** (Topaz et al., *Lancet* 2026) | Rising rates of hallucinated references across 2.5 million biomedical papers |
@@ -133,8 +133,6 @@ The workshop proposed these cases, which are not yet written up. The one-line su
 | Negative, excludes | **Into the Unknown** (arXiv:2610.19159) | Agents fell short on 135 open research problems submitted by scientists |
 | Negative, excludes | **Multi-agent teamwork** (CNBC, Nov 2026) | Confident errors compound when agents collaborate |
 | Negative, excludes | **METR rogue-agent investigation** (Aug 2026) | An independent audit of agents acting beyond their authorised scope |
-
-The notes list one arXiv ID (2605.08956) for both the agentic-scientists paper and Si et al. Si et al. is arXiv:2409.04109.
 
 ---
 
